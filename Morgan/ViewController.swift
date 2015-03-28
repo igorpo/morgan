@@ -18,8 +18,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     @IBOutlet var sendConstraint: NSLayoutConstraint!
     @IBOutlet var txtFieldConstraint: NSLayoutConstraint!
     var messages: [Message] = []
-    var randomAnswers: [String] = ["Hi there, how can I help?", "On it, gimme a sec!", "Sorry, I don't understand",
-                                    "That's what I thought", "Yup, sounds good"]
+    var randomAnswers: [String] = ["Hmm... I'll get back to you", "On it, gimme a sec!", "Sorry, I don't understand", "That's what I thought", "Yup, sounds good"]
     
     /*
      * Sends a message from the user
@@ -55,6 +54,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         super.viewDidLoad()
         self.tableView.delegate = self
         messageTextField.delegate = self
+        
+        let content1 = "Hello! I'm Morgan!"
+        let content2 = "How can I help you?"
+        let welcomeMsg: Message = Message(content: content1, isMorgan: true)
+        let welcomeMsg2: Message = Message(content: content2, isMorgan: true)
+        messages.append(welcomeMsg)
+        messages.append(welcomeMsg2)
+        
         tableView.estimatedRowHeight = 50
         tableView.rowHeight = UITableViewAutomaticDimension
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None
@@ -96,7 +103,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     */
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var cellIdentifier: String
-        
+//        var lbl = UILabel(frame: CGRectMake(0, 0, 300, 200))
+//        lbl.text =  messages[indexPath.row].content
+//        lbl.shadowColor = UIColor.blackColor()
+//        lbl.font = UIFont(name: "HelveticaNeue", size: CGFloat(14))
+//        lbl.textAlignment = NSTextAlignment.Left
+//        lbl.textColor = UIColor.purpleColor()
         if messages[indexPath.row].isMorgan {
             cellIdentifier = "morganCell"
         } else {
@@ -104,9 +116,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         }
         
         var cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as UITableViewCell
-    
         cell.textLabel?.text = messages[indexPath.row].content
-    
+//        cell.textLabel!.layer.cornerRadius = 8
+//        cell.textLabel!.layer.borderWidth = 3
+//        cell.textLabel!.layer.borderColor = UIColor.redColor().CGColor
+//        cell.textLabel!.sizeToFit()
         return cell
     }
     
