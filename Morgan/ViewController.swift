@@ -20,11 +20,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     var messages: [Message] = []
     var randomAnswers: [String] = ["Hi there, how can I help?", "On it, gimme a sec!", "Sorry, I don't understand",
                                     "That's what I thought", "Yup, sounds good"]
+    
+    /*
+     * Sends a message from the user
+     */
     @IBAction func sendMessage(sender: AnyObject) {
         if messageTextField.text != "" {
             var message:Message = Message(content: messageTextField.text, isMorgan: false)
             messages.append(message)
-            self.tableView.reloadData()
+            updateTableView()
             var timer = NSTimer.scheduledTimerWithTimeInterval(0.7, target: self, selector: Selector("morganAnswers"), userInfo: nil, repeats: false)
         } else {
             
@@ -32,52 +36,67 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         messageTextField.text = ""
     }
     
+    /*
+     * Morgan's response
+     */
     func morganAnswers () {
         let randomIndex = Int(arc4random_uniform(UInt32(randomAnswers.count)))
         var content = randomAnswers[randomIndex]
         var message:Message = Message(content: content, isMorgan: true)
         messages.append(message)
-        self.tableView.reloadData()
+        updateTableView()
     }
     
-    
+    /*
+     * Here we add delegates to TableView, and TextField, along with dynamic resizing of cells based on their content.
+     * We also set the keyboard observers to capture all events with the keyboard popping up. 
+     */
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.delegate = self
         messageTextField.delegate = self
+        tableView.estimatedRowHeight = 50
+        tableView.rowHeight = UITableViewAutomaticDimension
+        self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardDidHideNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
 
         txtFieldConstraint.constant = BOTTOM_CONSTRAINT
         sendConstraint.constant = BOTTOM_CONSTRAINT
-        var swipe: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "closeKeyboard");
-        swipe.direction = UISwipeGestureRecognizerDirection.Down
-        self.view.addGestureRecognizer(swipe)
     }
-
+    
+   /*
+    * Apple's standard.bullshit
+    */
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 
     // MARK: - Table view data source
     
+    /*
+     * Sections in the table. (We only need one)
+     */
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        // #warning Potentially incomplete method implementation.
         // Return the number of sections.
         return 1
     }
     
+   /*
+    * One row for each message in the convo
+    */
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete method implementation.
         // Return the number of rows in the section.
         return messages.count
     }
     
-
+   /*
+    * Queue the cells
+    */
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var cellIdentifier: String
+        
         if messages[indexPath.row].isMorgan {
             cellIdentifier = "morganCell"
         } else {
@@ -91,7 +110,19 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         return cell
     }
     
-    // resign text field on return key press
+   /*
+    * Properly reloads the messages in the conversation to move them accordingly.
+    */
+    func updateTableView() {
+        self.tableView.reloadData()
+        if self.tableView.contentSize.height > self.tableView.frame.size.height {
+            self.tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: messages.count - 1, inSection: 0), atScrollPosition: UITableViewScrollPosition.Middle, animated: true)
+        }
+    }
+    
+   /*
+    * Resign textfield upon return
+    */
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         txtFieldConstraint.constant = BOTTOM_CONSTRAINT
@@ -99,44 +130,39 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         return true
     }
     
-    func closeKeyboard() {
-        self.messageTextField.resignFirstResponder()
-        txtFieldConstraint.constant = BOTTOM_CONSTRAINT
-        sendConstraint.constant = BOTTOM_CONSTRAINT
-    }
-    
+    /*
+     * Called when keyboard is about to be dismissed
+     */
     func keyboardWillBeHidden(sender: NSNotification) {
         if let userInfo = sender.userInfo {
             if let keyboardHeight = userInfo[UIKeyboardFrameEndUserInfoKey]?.CGRectValue().size.height {
                 txtFieldConstraint.constant = BOTTOM_CONSTRAINT
                 sendConstraint.constant = BOTTOM_CONSTRAINT
-                let insets: UIEdgeInsets = UIEdgeInsetsMake(self.tableView.contentInset.top, 0, keyboardHeight, 0)
                 
-                self.tableView.contentInset = insets
-                self.tableView.scrollIndicatorInsets = insets
-            }
-        }
-    }
-    
-    func keyboardWillShow(sender: NSNotification) {
-        if let userInfo = sender.userInfo {
-            if let keyboardHeight = userInfo[UIKeyboardFrameEndUserInfoKey]?.CGRectValue().size.height {
-                txtFieldConstraint.constant = keyboardHeight + BOTTOM_CONSTRAINT
-                sendConstraint.constant = keyboardHeight + BOTTOM_CONSTRAINT
-                let insets: UIEdgeInsets = UIEdgeInsetsMake(self.tableView.contentInset.top, 0, keyboardHeight, 0)
-                
-                self.tableView.contentInset = insets
-                self.tableView.scrollIndicatorInsets = insets
-                
-                self.tableView.contentOffset = CGPointMake(self.tableView.contentOffset.x, self.tableView.contentOffset.y + keyboardHeight)
-                UIView.animateWithDuration(0.3, animations: { () -> Void in
+                // this isn't really needed here, they keyboard closes on its own but a little slower is better i think
+                UIView.animateWithDuration(2, animations: { () -> Void in
                     self.view.layoutIfNeeded()
                 })
             }
         }
     }
-
     
-    
+    /*
+     * Called when keyboard is about to appear. Properly adjusts text fields and buttons, etc.
+     */
+    func keyboardWillShow(sender: NSNotification) {
+        if let userInfo = sender.userInfo {
+            if let keyboardHeight = userInfo[UIKeyboardFrameEndUserInfoKey]?.CGRectValue().size.height {
+                if tableView.contentSize.height > keyboardHeight {
+                    self.tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: messages.count - 1, inSection: 0), atScrollPosition: UITableViewScrollPosition.Bottom, animated: true)
+                }
+                txtFieldConstraint.constant = keyboardHeight + BOTTOM_CONSTRAINT
+                sendConstraint.constant = keyboardHeight + BOTTOM_CONSTRAINT
+                self.tableView.contentOffset = CGPointMake(self.tableView.contentOffset.x, self.tableView.contentOffset.y + keyboardHeight)
+                UIView.animateWithDuration(0.5, animations: { () -> Void in
+                    self.view.layoutIfNeeded()
+                })
+            }
+        }
+    }
 }
-

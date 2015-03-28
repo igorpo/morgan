@@ -351,6 +351,7 @@
 				INFOPLIST_FILE = Morgan/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 			};
 			name = Debug;
 		};
@@ -361,6 +362,7 @@
 				INFOPLIST_FILE = Morgan/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 			};
 			name = Release;
 		};
@@ -417,6 +419,7 @@
 				B6A519CA1AC23A46006CA147 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B6A519CB1AC23A46006CA147 /* Build configuration list for PBXNativeTarget "MorganTests" */ = {
 			isa = XCConfigurationList;
@@ -425,6 +428,7 @@
 				B6A519CD1AC23A46006CA147 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
