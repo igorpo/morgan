@@ -27,6 +27,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         if messageTextField.text != "" {
             var message:Message = Message(content: messageTextField.text, isMorgan: false)
             messages.append(message)
+            Server.postToServer(message.content)
             updateTableView()
             var timer = NSTimer.scheduledTimerWithTimeInterval(0.7, target: self, selector: Selector("morganAnswers"), userInfo: nil, repeats: false)
         } else {
@@ -52,6 +53,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
      */
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         self.tableView.delegate = self
         messageTextField.delegate = self
         
