@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B60815131AC8AE7B0073360A /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60815121AC8AE7B0073360A /* Server.swift */; };
 		B6A519AC1AC23A46006CA147 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A519AB1AC23A46006CA147 /* AppDelegate.swift */; };
 		B6A519AF1AC23A46006CA147 /* Morgan.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B6A519AD1AC23A46006CA147 /* Morgan.xcdatamodeld */; };
 		B6A519B11AC23A46006CA147 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A519B01AC23A46006CA147 /* ViewController.swift */; };
@@ -29,6 +30,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B60815121AC8AE7B0073360A /* Server.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Server.swift; path = ../Server.swift; sourceTree = "<group>"; };
 		B6A519A61AC23A46006CA147 /* Morgan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Morgan.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6A519AA1AC23A46006CA147 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B6A519AB1AC23A46006CA147 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -83,6 +85,7 @@
 		B6A519A81AC23A46006CA147 /* Morgan */ = {
 			isa = PBXGroup;
 			children = (
+				B60815121AC8AE7B0073360A /* Server.swift */,
 				B6A519AB1AC23A46006CA147 /* AppDelegate.swift */,
 				B6A519B01AC23A46006CA147 /* ViewController.swift */,
 				B6A519B21AC23A46006CA147 /* Main.storyboard */,
@@ -225,6 +228,7 @@
 				B6A519AC1AC23A46006CA147 /* AppDelegate.swift in Sources */,
 				B6A519D11AC2442B006CA147 /* Message.swift in Sources */,
 				B6A519AF1AC23A46006CA147 /* Morgan.xcdatamodeld in Sources */,
+				B60815131AC8AE7B0073360A /* Server.swift in Sources */,
 				B6A519CF1AC24073006CA147 /* TableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
