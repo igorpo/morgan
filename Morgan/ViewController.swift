@@ -18,7 +18,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     @IBOutlet var sendConstraint: NSLayoutConstraint!
     @IBOutlet var txtFieldConstraint: NSLayoutConstraint!
     var messages: [Message] = []
-    var randomAnswers: [String] = ["Hmm... I'll get back to you", "On it, gimme a sec!", "Sorry, I don't understand", "That's what I thought", "Yup, sounds good"]
+    var randomAnswers: [String] = ["Hmm... I'll get back to you", "On it, gimme a sec!", "Sorry, I don't understand", "That's what I thought", "Yup, sounds good", "Let me tell you a story", "Band or DJ?", "Fuck off!", "Pleased to meet you!", "You're clearly a potato", "I really like you, we should go out...sike", "I don't really know, tell me more", "I love you too!", "The wonderful world of OZ!"]
     
     /*
      * Sends a message from the user
@@ -36,7 +36,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     }
     
     /*
-     * Morgan's response
+     * Morgan's response (random for now)
      */
     func morganAnswers () {
         let randomIndex = Int(arc4random_uniform(UInt32(randomAnswers.count)))
@@ -62,8 +62,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         messages.append(welcomeMsg)
         messages.append(welcomeMsg2)
         
-        tableView.estimatedRowHeight = 50
+        tableView.allowsSelection = false
+        tableView.estimatedRowHeight = 100
         tableView.rowHeight = UITableViewAutomaticDimension
+
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
@@ -116,11 +118,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         }
         
         var cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as UITableViewCell
-        cell.textLabel?.text = messages[indexPath.row].content
-//        cell.textLabel!.layer.cornerRadius = 8
-//        cell.textLabel!.layer.borderWidth = 3
-//        cell.textLabel!.layer.borderColor = UIColor.redColor().CGColor
-//        cell.textLabel!.sizeToFit()
+        var theLabel : UILabel? = cell.viewWithTag(1) as? UILabel;
+            theLabel?.lineBreakMode = .ByWordWrapping
+            theLabel?.numberOfLines = 0
+            theLabel?.text = messages[indexPath.row].content
+//        theLabel?.sizeToFit()
+//        theLabel?.layer.cornerRadius = 8
+//        theLabel?.layer.borderWidth = 3
+//        theLabel?.layer.borderColor = UIColor.redColor().CGColor
+
+        
         return cell
     }
     
