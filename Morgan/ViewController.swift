@@ -118,11 +118,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         }
         
         var cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as UITableViewCell
-        var theLabel : UILabel? = cell.viewWithTag(1) as? UILabel;
-            theLabel?.lineBreakMode = .ByWordWrapping
-            theLabel?.numberOfLines = 0
-            theLabel?.text = messages[indexPath.row].content
-//        theLabel?.sizeToFit()
+        var theLabel : UILabel = cell.viewWithTag(1) as UILabel
+        theLabel.sizeToFit()
+//        theLabel.lineBreakMode = .ByWordWrapping
+//        theLabel.numberOfLines = 0
+        theLabel.text = messages[indexPath.row].content
+//        theLabel.sizeToFit()
+//        if theLabel.numberOfLines == 0 && cellIdentifier == "userMessageCell" {
+//            theLabel.textAlignment = .Right
+//        }
+        
 //        theLabel?.layer.cornerRadius = 8
 //        theLabel?.layer.borderWidth = 3
 //        theLabel?.layer.borderColor = UIColor.redColor().CGColor
