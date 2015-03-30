@@ -65,7 +65,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         messages.append(welcomeMsg2)
         
         tableView.allowsSelection = false
-        tableView.estimatedRowHeight = 100
+        tableView.estimatedRowHeight = 50
         tableView.rowHeight = UITableViewAutomaticDimension
 
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None
@@ -121,19 +121,26 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         
         var cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as UITableViewCell
         var theLabel : UILabel = cell.viewWithTag(1) as UILabel
-        theLabel.sizeToFit()
-//        theLabel.lineBreakMode = .ByWordWrapping
-//        theLabel.numberOfLines = 0
+        theLabel.lineBreakMode = .ByWordWrapping
+        theLabel.numberOfLines = 0
         theLabel.text = messages[indexPath.row].content
-//        theLabel.sizeToFit()
-//        if theLabel.numberOfLines == 0 && cellIdentifier == "userMessageCell" {
+
+        
+//        theLabel.backgroundColor = UIColor.blueColor();
+//        theLabel.layer.cornerRadius = 10;
+//        theLabel.layer.masksToBounds = true;
+//        theLabel.clipsToBounds = true;
+        theLabel.sizeToFit();
+        cell.layoutIfNeeded()
+        
+//        if cellIdentifier == "userMessageCell" {
 //            theLabel.textAlignment = .Right
 //        }
         
 //        theLabel?.layer.cornerRadius = 8
 //        theLabel?.layer.borderWidth = 3
 //        theLabel?.layer.borderColor = UIColor.redColor().CGColor
-
+//        cell.addSubview(theLabel)
         
         return cell
     }

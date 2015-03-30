@@ -26,6 +26,11 @@
                                     <action selector="sendMessage:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="i1t-u6-K1y"/>
                                 </connections>
                             </button>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Send a message to Morgan" clearsOnBeginEditing="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="vs3-uo-JQT">
+                                <rect key="frame" x="9" y="530" width="252" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textField>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" indicatorStyle="black" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="66" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="x1O-yt-hoX">
                                 <rect key="frame" x="0.0" y="64" width="320" height="458"/>
                                 <prototypes>
@@ -35,13 +40,19 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="l2g-kB-I0z" id="lMi-CF-aND">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" tag="1" contentMode="left" fixedFrame="YES" text="Message from Morgan" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kft-dJ-g9u">
-                                                    <rect key="frame" x="15" y="-1.5" width="205" height="68.5"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" tag="1" contentMode="left" text="Message from Morgan" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kft-dJ-g9u">
+                                                    <rect key="frame" x="15" y="13" width="207" height="39.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <color key="textColor" red="0.53333333329999999" green="0.30196078430000001" blue="0.76862745099999996" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
+                                            <constraints>
+                                                <constraint firstItem="Kft-dJ-g9u" firstAttribute="top" secondItem="lMi-CF-aND" secondAttribute="topMargin" constant="5" id="1Rn-jx-Uk5"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="Kft-dJ-g9u" secondAttribute="bottom" constant="5" id="33B-8n-yYU"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="Kft-dJ-g9u" secondAttribute="trailing" constant="90" id="Xlw-6k-5jb"/>
+                                                <constraint firstItem="Kft-dJ-g9u" firstAttribute="leading" secondItem="lMi-CF-aND" secondAttribute="leadingMargin" constant="7" id="qIL-fg-zDb"/>
+                                            </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="userMessageCell" rowHeight="66" id="Chs-XV-AuP">
@@ -50,13 +61,19 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Chs-XV-AuP" id="FZ8-t0-g61">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" tag="1" contentMode="left" fixedFrame="YES" text="Message from user" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Va1-DK-WKW">
+                                                <label opaque="NO" multipleTouchEnabled="YES" tag="1" contentMode="left" misplaced="YES" text="Message from user" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Va1-DK-WKW">
                                                     <rect key="frame" x="98" y="4" width="207" height="57"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <color key="textColor" red="0.1348645845" green="0.54967817409999997" blue="0.98252051770000004" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
+                                            <constraints>
+                                                <constraint firstItem="Va1-DK-WKW" firstAttribute="top" secondItem="FZ8-t0-g61" secondAttribute="topMargin" constant="5" id="2IB-ei-oy0"/>
+                                                <constraint firstItem="Va1-DK-WKW" firstAttribute="leading" secondItem="FZ8-t0-g61" secondAttribute="leadingMargin" constant="90" id="ctl-2C-A2o"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="Va1-DK-WKW" secondAttribute="trailing" constant="7" id="j04-Lm-sdq"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="Va1-DK-WKW" secondAttribute="bottom" constant="5" id="lqk-C2-frf"/>
+                                            </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                 </prototypes>
@@ -65,11 +82,6 @@
                                     <outlet property="delegate" destination="vXZ-lx-hvc" id="TNt-Ja-1ol"/>
                                 </connections>
                             </tableView>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Send a message to Morgan" clearsOnBeginEditing="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="vs3-uo-JQT">
-                                <rect key="frame" x="9" y="530" width="252" height="30"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                            </textField>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
