@@ -27,7 +27,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         if messageTextField.text != "" {
             var message:Message = Message(content: messageTextField.text, isMorgan: false)
             messages.append(message)
-            Server.postToServer(message.content)
+//            Server.postToServer(message.content)
             updateTableView()
             var timer = NSTimer.scheduledTimerWithTimeInterval(0.7, target: self, selector: Selector("morganAnswers"), userInfo: nil, repeats: false)
         } else {
@@ -63,6 +63,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         let welcomeMsg2: Message = Message(content: content2, isMorgan: true)
         messages.append(welcomeMsg)
         messages.append(welcomeMsg2)
+        
         
         tableView.allowsSelection = false
         tableView.estimatedRowHeight = 50
@@ -107,12 +108,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     */
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var cellIdentifier: String
-//        var lbl = UILabel(frame: CGRectMake(0, 0, 300, 200))
-//        lbl.text =  messages[indexPath.row].content
-//        lbl.shadowColor = UIColor.blackColor()
-//        lbl.font = UIFont(name: "HelveticaNeue", size: CGFloat(14))
-//        lbl.textAlignment = NSTextAlignment.Left
-//        lbl.textColor = UIColor.purpleColor()
+
         if messages[indexPath.row].isMorgan {
             cellIdentifier = "morganCell"
         } else {
@@ -120,27 +116,61 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         }
         
         var cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as UITableViewCell
+        
+        
+        
         var theLabel : UILabel = cell.viewWithTag(1) as UILabel
         theLabel.lineBreakMode = .ByWordWrapping
         theLabel.numberOfLines = 0
         theLabel.text = messages[indexPath.row].content
 
+        theLabel.sizeToFit()
+        if (countElements(theLabel.text!) < 26 && cellIdentifier == "userMessageCell") {
+            theLabel.textAlignment = .Right
+        }
+
         
-//        theLabel.backgroundColor = UIColor.blueColor();
-//        theLabel.layer.cornerRadius = 10;
-//        theLabel.layer.masksToBounds = true;
-//        theLabel.clipsToBounds = true;
-        theLabel.sizeToFit();
-        cell.layoutIfNeeded()
+        if cellIdentifier == "morganCell" {
+            let size = NSString(string: theLabel.text!).sizeWithAttributes([NSFontAttributeName: theLabel.font]);
+            
+            let rect = CGRectMake(theLabel.frame.origin.x - (theLabel.frame.size.width - size.width),
+                theLabel.frame.origin.y,
+                size.width,
+                size.height);
+            let bubbleView: UIView = UIView(frame: rect)
+            bubbleView.layer.borderColor = UIColor.purpleColor().CGColor
+            bubbleView.backgroundColor = UIColor.purpleColor()
+            theLabel.textColor = UIColor.whiteColor()
+            bubbleView.layer.borderWidth = 1
+            bubbleView.layer.cornerRadius = 12
+            bubbleView.bounds = CGRectInset(bubbleView.frame, -6, -6)
+            cell.addSubview(bubbleView)
+            cell.sendSubviewToBack(bubbleView)
+        } else if cellIdentifier == "userMessageCell" {
+            let size = NSString(string: theLabel.text!).sizeWithAttributes([NSFontAttributeName: theLabel.font]);
+            let widthOfScreen = UIScreen.mainScreen().applicationFrame.width
+            let rect = CGRectMake(widthOfScreen - size.width - 14,
+                theLabel.frame.origin.y + size.height - 7,
+                size.width,
+                size.height)
+            
+            let bubbleView: UIView = UIView(frame: rect)
+            bubbleView.layer.borderColor = UIColor.blueColor().CGColor
+            bubbleView.backgroundColor = UIColor.blueColor()
+            theLabel.textColor = UIColor.whiteColor()
+            bubbleView.layer.borderWidth = 1
+            bubbleView.layer.cornerRadius = 12
+            bubbleView.bounds = CGRectInset(bubbleView.frame, -6, -6)
+            cell.addSubview(bubbleView)
+            cell.sendSubviewToBack(bubbleView)
+            
+//            let back = UIView(frame: cell.contentView.bounds)
+//            back.backgroundColor = UIColor.whiteColor()
+//            cell.addSubview(back)
+//            cell.sendSubviewToBack(back)
+        }
+
         
-//        if cellIdentifier == "userMessageCell" {
-//            theLabel.textAlignment = .Right
-//        }
-        
-//        theLabel?.layer.cornerRadius = 8
-//        theLabel?.layer.borderWidth = 3
-//        theLabel?.layer.borderColor = UIColor.redColor().CGColor
-//        cell.addSubview(theLabel)
         
         return cell
     }
