@@ -18,7 +18,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     @IBOutlet var sendConstraint: NSLayoutConstraint!
     @IBOutlet var txtFieldConstraint: NSLayoutConstraint!
     var messages: [Message] = []
-    var randomAnswers: [String] = ["Hmm... I'll get back to you", "On it, gimme a sec!", "Sorry, I don't understand", "That's what I thought", "Yup, sounds good", "Let me tell you a story", "Band or DJ?", "Fuck off!", "Pleased to meet you!", "You're clearly a potato", "I really like you, we should go out...sike", "I don't really know, tell me more", "I love you too!", "The wonderful world of OZ!"]
+//    var randomAnswers: [String] = ["Hmm... I'll get back to you", "On it, gimme a sec!", "Sorry, I don't understand", "That's what I thought", "Yup, sounds good", "Let me tell you a story", "Band or DJ?", "Fuck off!", "Pleased to meet you!", "You're clearly a potato", "I really like you, we should go out...sike", "I don't really know, tell me more", "I love you too!", "The wonderful world of OZ!"]
+    var randomAnswers: [String] = ["this is a rlly kf ejrf ejrkf ewjkrf ewrjkf ewjrkf erwjewrjk ewjkrg ewkrg werkg ewtg ejkt jrtk rtkj erk erjj ekj fewjr wjer gejkg ejkg ejg ergrejg kjrg jwke gkjr g rgjkwg dgbg is an idiofgft omgfg wagvs fg i fg gvf  yougbgbgr gberg! this is a rlly kf ejrf ejrkf ewjkrf ewrjkf ewjrkf erwjewrjk ewjkrg ewkrg werkg ewtg ejkt jrtk rtkj erk erjj ekj fewjr wjer gejkg ejkg ejg ergrejg kjrg jwke gkjr g rgjkwg kierahf wfds if ht ric j rjh f bubbles!"]
     
     /*
      * Sends a message from the user
@@ -125,18 +126,23 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         theLabel.text = messages[indexPath.row].content
 
         theLabel.sizeToFit()
-        if (countElements(theLabel.text!) < 26 && cellIdentifier == "userMessageCell") {
+        let numCharsInLabel = countElements(theLabel.text!)
+        if (numCharsInLabel < 26 && cellIdentifier == "userMessageCell") {
             theLabel.textAlignment = .Right
         }
 
         
         if cellIdentifier == "morganCell" {
-            let size = NSString(string: theLabel.text!).sizeWithAttributes([NSFontAttributeName: theLabel.font]);
-            
-            let rect = CGRectMake(theLabel.frame.origin.x - (theLabel.frame.size.width - size.width),
+            let size = NSString(string: theLabel.text!).sizeWithAttributes([NSFontAttributeName: theLabel.font])
+//            println("Width of text: \(size.width)")
+//            println("x coord of label: \(theLabel.frame.origin.x)")
+//            println("size of label: \(theLabel.frame.size.width)")
+//            println("--------------------------------")
+            let setTxtWidth = (numCharsInLabel < 26) ? size.width : size.width / ((CGFloat) (numCharsInLabel / 32))
+            let rect = CGRectMake(theLabel.frame.origin.x,
                 theLabel.frame.origin.y,
-                size.width,
-                size.height);
+                setTxtWidth,
+                theLabel.frame.height)
             let bubbleView: UIView = UIView(frame: rect)
             bubbleView.layer.borderColor = UIColor.purpleColor().CGColor
             bubbleView.backgroundColor = UIColor.purpleColor()
@@ -144,10 +150,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             bubbleView.layer.borderWidth = 1
             bubbleView.layer.cornerRadius = 12
             bubbleView.bounds = CGRectInset(bubbleView.frame, -6, -6)
-            cell.addSubview(bubbleView)
-            cell.sendSubviewToBack(bubbleView)
+            cell.contentView.addSubview(bubbleView)
+            cell.contentView.sendSubviewToBack(bubbleView)
         } else if cellIdentifier == "userMessageCell" {
-            let size = NSString(string: theLabel.text!).sizeWithAttributes([NSFontAttributeName: theLabel.font]);
+            let size = NSString(string: theLabel.text!).sizeWithAttributes([NSFontAttributeName: theLabel.font])
             let widthOfScreen = UIScreen.mainScreen().applicationFrame.width
             let rect = CGRectMake(widthOfScreen - size.width - 14,
                 theLabel.frame.origin.y + size.height - 7,
