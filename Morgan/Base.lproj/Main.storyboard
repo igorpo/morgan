@@ -102,6 +102,7 @@
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
                         <outlet property="messageTextField" destination="vs3-uo-JQT" id="Cgw-gt-A0H"/>
+                        <outlet property="sendBtn" destination="k3M-RP-2kn" id="Bgk-Pg-tf9"/>
                         <outlet property="sendConstraint" destination="u1w-Qo-BAd" id="fBd-Kt-OyB"/>
                         <outlet property="tableView" destination="x1O-yt-hoX" id="nph-Gh-oPN"/>
                         <outlet property="txtFieldConstraint" destination="GNj-82-xRg" id="2T9-Rc-xO7"/>
