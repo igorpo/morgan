@@ -43,4 +43,4 @@ def searchForLocation(location_name, index=0):
         return None
 
 def searchByKeywords(dict, lat, long):
-    return "This works"
+    return searchForEvent(user_latitude= lat, user_longitude= long, index=0)
