@@ -26,6 +26,10 @@ def parse_text(text, return_responses):
 	for sent in sentences:
          for chunk in nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(sent))):
              if hasattr(chunk, 'label'):
+             	if chunk.label() == 'PERSON':
+             		return_responses["Artist"] = ' '.join(c[0] for c in chunk.leaves())
+             		return return_responses
+
              	if chunk.label() == 'GSP' or chunk.label() == 'GPE':
                 	return_responses["Location"] = ' '.join(c[0] for c in chunk.leaves())
                 	return return_responses
@@ -48,7 +52,6 @@ if __name__ == '__main__':
 		exit("NLP App called without text input")
 
 	text = sys.argv[1]
-	print text
 
 	return_responses = {"Location": None, 
 						"Artist": None, 
@@ -58,5 +61,5 @@ if __name__ == '__main__':
 	
 	parse_text(text, return_responses)
 
-	#for p in return_responses:	print return_responses[p]
+	#for p in return_responses:	print p, ",", return_responses[p]
 
