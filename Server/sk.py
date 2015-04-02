@@ -41,3 +41,6 @@ def searchForLocation(location_name, index=0):
     except:
         print("No location found.")
         return None
+
+def searchByKeywords(dict, lat, long):
+    return "This works"
