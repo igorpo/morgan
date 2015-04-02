@@ -41,19 +41,19 @@ def parse_text(text, return_responses):
 			return return_responses
 
 
- 	return_responses["Custom"] = "Sorry, didn't recognize that. Enter a new query!"            	
+	return_responses["Custom"] = "Sorry, didn't recognize that. Enter a new query!"            	
 	return return_responses
 
 
 
 def getKeywords(text):
-	if text is None
+	if text is None:
 		exit("NLP app called without text input")
 
 	return_responses = {"Location": None, 
 						"Artist": None, 
 				 		"Venue": None, 
-				 		"Date": None
+				 		"Date": None,
 				 		"Custom": None, 
 				 		"UseGeolocation": None}
 	
