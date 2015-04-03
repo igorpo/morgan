@@ -12,10 +12,10 @@ geolocation_phrases = ["nearby", "near me", "shows", "concerts", "tonight"]
 
 def parse_text(text, return_responses):
 	if text == autoresponses[0]:
-		return_responses["Custom"] = "Sorry, can't find those tickets yet. Feast your eyes on Cher instead http://thenetworth.net/wp-content/uploads/2013/01/CHER-NET-WORTH1.jpg !"
+		return_responses["Custom"] = "Sorry, can't find those tickets yet. Enter a new query!"
 		return return_responses
 	if text == autoresponses[1]:
-		return_responses["Custom"] = "Soon we'll be able to link to some songs. For now, here's some Cher https://www.youtube.com/watch?v=BsKbwR7WXN4"
+		return_responses["Custom"] = "Soon we'll be able to link to some songs. For now, enter a new query!"
 		return return_responses
 	if text == autoresponses[2]:
 		return_responses["Custom"] = "Sorry, soon we'll show other options. For now, enter a new query."
@@ -26,13 +26,13 @@ def parse_text(text, return_responses):
 	for sent in sentences:
          for chunk in nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(sent))):
              if hasattr(chunk, 'label'):
-             	if chunk.label() == 'PERSON':
-             		return_responses["Artist"] = ' '.join(c[0] for c in chunk.leaves())
-             		return return_responses
-
              	if chunk.label() == 'GSP' or chunk.label() == 'GPE':
                 	return_responses["Location"] = ' '.join(c[0] for c in chunk.leaves())
                 	return return_responses
+
+             	if chunk.label() == 'PERSON':
+             		return_responses["Artist"] = ' '.join(c[0] for c in chunk.leaves())
+             		return return_responses
 
 
 	for phrase in geolocation_phrases:
@@ -50,7 +50,7 @@ def getKeywords(text):
 	if text is None:
 		exit("NLP app called without text input")
 
-	return_responses = {"Location": None, 
+	return_responses = {"Location": None, ``
 						"Artist": None, 
 				 		"Venue": None, 
 				 		"Date": None,
