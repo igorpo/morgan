@@ -60,7 +60,7 @@ def searchByKeywords(dict, lat, long):
     if custom is not None:
         return custom
     elif location is not None:
-        return searchForEvent(Location,lat,long, index=0)
+        return searchForEvent(location,lat,long, index=0)
     elif artist is not None:
         return "Artist search doesn't exist yet. Try again."
     else:
