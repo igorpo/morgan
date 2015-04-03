@@ -46,9 +46,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         updateTableView()
 
         
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            self.showAnswerButtons()
-        })
+//        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+//            self.showAnswerButtons()
+//        })
 
     }
     
@@ -88,7 +88,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     }
     
    /*
-    * Apple's standard.bullshit
+    * Apple's standard
     */
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -124,17 +124,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             cellIdentifier = "userMessageCell"
         }
 
-        var cell: UITableViewCell = UITableViewCell(style: UITableViewCellStyle.Default, reuseIdentifier: cellIdentifier)
-
+        var cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as UITableViewCell
+        
         // prevent appending layers on layers
         cell.contentView.viewWithTag(500)?.removeFromSuperview()
+        var theLabel : UILabel = cell.viewWithTag(1) as UILabel
+        theLabel.font = theLabel.font.fontWithSize(17)
         
         if cellIdentifier == "morganCell" {
-            
-            // prevent appending layers on layers
-            cell.contentView.viewWithTag(500)?.removeFromSuperview()
-            
-            var theLabel: UILabel = UILabel(frame: CGRectMake(15, 15, 200, 40))
+
             cell.contentView.addSubview(theLabel)
 
             theLabel.lineBreakMode = .ByWordWrapping
@@ -160,13 +158,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             cell.contentView.addSubview(bubbleView)
             cell.contentView.sendSubviewToBack(bubbleView)
         } else if cellIdentifier == "userMessageCell" {
-            
-            // prevent appending layers on layers
-            cell.contentView.viewWithTag(500)?.removeFromSuperview()
 
-//            var theLabel: UILabel = UILabel(frame: CGRectMake(98, 5, 207, 57))
-            var theLabel: UILabel = UILabel(frame: CGRectMake(15, 15, 207, 57))
             cell.contentView.addSubview(theLabel)
+            
             theLabel.lineBreakMode = .ByWordWrapping
             theLabel.numberOfLines = 0
             theLabel.text = messages[indexPath.row].content
@@ -297,18 +291,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         println(error)
     }
     
-    /*
-     * Pop over custom answer choices
-     */
-    func showAnswerButtons() {
-        self.ansView = UIView(frame: CGRectMake(0, UIScreen.mainScreen().applicationFrame.height - KEYBOARD_HEIGHT, UIScreen.mainScreen().applicationFrame.width, KEYBOARD_HEIGHT + 20))
-        self.ansView.backgroundColor = UIColor(red: 242 / 255.0, green: 242 / 255.0, blue: 242 / 255.0, alpha: 1)
-
-        self.view.addSubview(ansView)
-            self.messageTextField.resignFirstResponder()
-        generateAutoResponseButtons(["I'm down! Show me tickets.", "Not sure. Give me more info.", "Fuck you morgan. Show me something else!"])
-        
-    }
+//    /*
+//     * Pop over custom answer choices
+//     */
+//    func showAnswerButtons() {
+//        self.ansView = UIView(frame: CGRectMake(0, UIScreen.mainScreen().applicationFrame.height - KEYBOARD_HEIGHT, UIScreen.mainScreen().applicationFrame.width, KEYBOARD_HEIGHT + 20))
+//        self.ansView.backgroundColor = UIColor(red: 242 / 255.0, green: 242 / 255.0, blue: 242 / 255.0, alpha: 1)
+//
+//        self.view.addSubview(ansView)
+//            self.messageTextField.resignFirstResponder()
+//        generateAutoResponseButtons(["I'm down! Show me tickets.", "Not sure. Give me more info.", "Fuck you morgan. Show me something else!"])
+//        
+//    }
     
     func generateAutoResponseButtons(options : [String]) {
         var initialY : CGFloat = 40
