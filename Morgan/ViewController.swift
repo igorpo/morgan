@@ -7,6 +7,7 @@
 //
 
 import UIKit
+<<<<<<< HEAD
 import CoreLocation
 
 var KEYBOARD_HEIGHT: CGFloat = 0
@@ -15,6 +16,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     let BOTTOM_CONSTRAINT: CGFloat = 10.0
     var userLoc: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 0, longitude: 0)
     var manager: CLLocationManager = CLLocationManager()
+=======
+var KEYBOARD_HEIGHT: CGFloat = 0
+
+class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate {
+    
+    let BOTTOM_CONSTRAINT: CGFloat = 10.0
+    
+
+    @IBOutlet var sendBtn: UIButton!
+>>>>>>> 3a9e8e67c84639cfba7e83357679cb4ee4cb8d65
     @IBOutlet var tableView: UITableView!
     @IBOutlet var messageTextField: UITextField!
     @IBOutlet var sendConstraint: NSLayoutConstraint!
@@ -42,10 +53,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         var message:Message = Message(content: content, isMorgan: true)
         messages.append(message)
         updateTableView()
+<<<<<<< HEAD
         
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.showAnswerButtons()
         })
+=======
+        showAnswerButtons(1)
+>>>>>>> 3a9e8e67c84639cfba7e83357679cb4ee4cb8d65
     }
     
     /*
@@ -120,8 +135,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             cellIdentifier = "userMessageCell"
         }
         
-        var cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as UITableViewCell
+//        var cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as UITableViewCell
         
+<<<<<<< HEAD
+=======
+
+        var cell: UITableViewCell = UITableViewCell(style: UITableViewCellStyle.Default, reuseIdentifier: cellIdentifier)
+
+        
+//        var theLabel : UILabel = cell.viewWithTag(1) as UILabel
+        
+
+>>>>>>> 3a9e8e67c84639cfba7e83357679cb4ee4cb8d65
         // prevent appending layers on layers
         cell.contentView.viewWithTag(500)?.removeFromSuperview()
         
@@ -132,16 +157,48 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         theLabel.font = theLabel.font.fontWithSize(17)
         theLabel.sizeToFit()
         
+<<<<<<< HEAD
         let numCharsInLabel: CGFloat = CGFloat(countElements(theLabel.text!))
         
         if cellIdentifier == "morganCell" {
             // prevent appending layers on layers
             cell.contentView.viewWithTag(500)?.removeFromSuperview()
             let size = NSString(string: theLabel.text!).sizeWithAttributes([NSFontAttributeName: theLabel.font])
+=======
+        let numCharsInLabel = countElements(theLabel.text!)
+        if (numCharsInLabel < 26 && cellIdentifier == "userMessageCell") {
+            theLabel.textAlignment = .Right
+        }
+
+        
+        if cellIdentifier == "morganCell" {
+            
+            var theLabel: UILabel = UILabel(frame: CGRectMake(15, 15, 200, 40))
+            cell.contentView.addSubview(theLabel)
+            
+
+
+            
+            theLabel.lineBreakMode = .ByWordWrapping
+            theLabel.numberOfLines = 0
+            theLabel.text = messages[indexPath.row].content
+            
+            theLabel.sizeToFit()
+            let numCharsInLabel = countElements(theLabel.text!)
+
+            
+            let size = NSString(string: theLabel.text!).sizeWithAttributes([NSFontAttributeName: theLabel.font])
+
+//            println("Width of text: \(size.width)")
+//            println("x coord of label: \(theLabel.frame.origin.x)")
+//            println("size of label: \(theLabel.frame.size.width)")
+//            println("--------------------------------")
+>>>>>>> 3a9e8e67c84639cfba7e83357679cb4ee4cb8d65
             
             let setTxtWidth = (numCharsInLabel < 26) ? size.width : size.width / (numCharsInLabel / 28.0)
             let rect = CGRectMake(theLabel.frame.origin.x, theLabel.frame.origin.y, setTxtWidth, theLabel.frame.height)
             
+
             let bubbleView: UIView = UIView(frame: rect)
             bubbleView.layer.borderColor = UIColor(red: 229 / 255.0, green: 229 / 255.0, blue: 234 / 255.0, alpha: 1).CGColor
                 //UIColor(red: 229 / 255.0, green: 229 / 255.0, blue: 234 / 255.0, alpha: 1)
@@ -155,13 +212,51 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             bubbleView.tag = 500
             cell.contentView.addSubview(bubbleView)
             cell.contentView.sendSubviewToBack(bubbleView)
+            
+//            theLabel.setTranslatesAutoresizingMaskIntoConstraints(false)
+//            var constraintTop = NSLayoutConstraint(item: theLabel, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: view, attribute: NSLayoutAttribute.Top, multiplier: 1, constant: 5)
+//            theLabel.addConstraint(constraintTop)
+//            var constraintBtm = NSLayoutConstraint(item: theLabel, attribute: NSLayoutAttribute.Bottom, relatedBy: NSLayoutRelation.Equal, toItem: view, attribute: NSLayoutAttribute.Bottom, multiplier: 1, constant: 5)
+//            theLabel.addConstraint(constraintBtm)
+//            var constraintRight = NSLayoutConstraint(item: theLabel, attribute: NSLayoutAttribute.Trailing, relatedBy: NSLayoutRelation.Equal, toItem: view, attribute: NSLayoutAttribute.Trailing, multiplier: 1, constant: 7)
+//            theLabel.addConstraint(constraintRight)
+//            var constraintLeft = NSLayoutConstraint(item: theLabel, attribute: NSLayoutAttribute.Leading, relatedBy: NSLayoutRelation.Equal, toItem: view, attribute: NSLayoutAttribute.Leading, multiplier: 1, constant: 90)
+//            theLabel.addConstraint(constraintLeft)
         } else if cellIdentifier == "userMessageCell" {
+<<<<<<< HEAD
             // prevent appending layers on layers
             cell.contentView.viewWithTag(500)?.removeFromSuperview()
             
             if numCharsInLabel < 26 {
                 theLabel.textAlignment = .Right
             }
+=======
+
+            var theLabel: UILabel = UILabel(frame: CGRectMake(98, 5, 207, 57))
+            cell.contentView.addSubview(theLabel)
+            
+//            theLabel.setTranslatesAutoresizingMaskIntoConstraints(false)
+//            var constraintTop = NSLayoutConstraint(item: theLabel, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: view, attribute: NSLayoutAttribute.Top, multiplier: 1, constant: 5)
+//            theLabel.addConstraint(constraintTop)
+//            var constraintBtm = NSLayoutConstraint(item: theLabel, attribute: NSLayoutAttribute.Bottom, relatedBy: NSLayoutRelation.Equal, toItem: view, attribute: NSLayoutAttribute.Bottom, multiplier: 1, constant: 5)
+//            theLabel.addConstraint(constraintBtm)
+//            var constraintRight = NSLayoutConstraint(item: theLabel, attribute: NSLayoutAttribute.Trailing, relatedBy: NSLayoutRelation.Equal, toItem: view, attribute: NSLayoutAttribute.Trailing, multiplier: 1, constant: 7)
+//            theLabel.addConstraint(constraintRight)
+//            var constraintLeft = NSLayoutConstraint(item: theLabel, attribute: NSLayoutAttribute.Leading, relatedBy: NSLayoutRelation.Equal, toItem: view, attribute: NSLayoutAttribute.Leading, multiplier: 1, constant: 90)
+//            theLabel.addConstraint(constraintLeft)
+            
+            theLabel.lineBreakMode = .ByWordWrapping
+            theLabel.numberOfLines = 0
+            theLabel.text = messages[indexPath.row].content
+            
+            theLabel.sizeToFit()
+            let numCharsInLabel = countElements(theLabel.text!)
+            if (numCharsInLabel < 26 && cellIdentifier == "userMessageCell") {
+                theLabel.textAlignment = .Right
+            }
+            
+
+>>>>>>> 3a9e8e67c84639cfba7e83357679cb4ee4cb8d65
             let size = NSString(string: theLabel.text!).sizeWithAttributes([NSFontAttributeName: theLabel.font])
             
             let setTxtWidth = (numCharsInLabel < 26) ? size.width : size.width / (numCharsInLabel / 28.0)
@@ -189,6 +284,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     * Properly reloads the messages in the conversation to move them accordingly.
     */
     func updateTableView() {
+
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.tableView.reloadData()
             self.tableView.layoutIfNeeded()
@@ -196,6 +292,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                 self.tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: self.messages.count - 1, inSection: 0), atScrollPosition: UITableViewScrollPosition.Bottom, animated: true)
             }
         })
+<<<<<<< HEAD
+=======
+
+        println("updateTableView")
+//        if self.tableView.contentSize.height > self.tableView.frame.size.height {
+//            self.tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: messages.count - 1, inSection: 0), atScrollPosition: UITableViewScrollPosition.Bottom, animated: true)
+//        }
+
+>>>>>>> 3a9e8e67c84639cfba7e83357679cb4ee4cb8d65
     }
     
    /*
@@ -245,6 +350,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         }
     }
     
+<<<<<<< HEAD
     // MARK: location set up
     
     /*
@@ -328,4 +434,31 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         self.ansView.removeFromSuperview()
         
     }
+=======
+    func showAnswerButtons(answerType: Int) {
+        switch (answerType) {
+        case 1:
+            // morgan returned first result out of many
+            // show following buttons:
+            //  I like it, show me more info
+            //  Show me another
+            //  Show me all result
+            // get rid of keyboard
+            self.messageTextField.resignFirstResponder()
+            
+            let ansView: UIView = UIView(frame: CGRectMake(0, UIScreen.mainScreen().applicationFrame.height - KEYBOARD_HEIGHT, UIScreen.mainScreen().applicationFrame.width, KEYBOARD_HEIGHT + 20))
+            ansView.backgroundColor = UIColor.lightGrayColor()
+            ansView.layer.cornerRadius = 15
+            self.view.addSubview(ansView)
+            let likeBtn = UIButton.buttonWithType(UIButtonType.System) as UIButton
+            likeBtn.frame = CGRectMake(15, <#y: CGFloat#>, <#width: CGFloat#>, <#height: CGFloat#>)
+            
+            
+            
+            break
+        default:
+            break
+        }
+    }
+>>>>>>> 3a9e8e67c84639cfba7e83357679cb4ee4cb8d65
 }
