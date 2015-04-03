@@ -47,8 +47,6 @@ def parse_text(text, return_responses):
 
 
 def getKeywords(text):
-	if text is None:
-		exit("NLP app called without text input")
 
 	return_responses = {"Location": None, 
 						"Artist": None, 
