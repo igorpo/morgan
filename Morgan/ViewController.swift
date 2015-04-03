@@ -71,13 +71,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         
         setUpLocation()
         
-        let content1 = "Hello! I'm Morgan!"
-        let content2 = "How can I help you?"
+        let content1 = "Hello! I'm Morgan! Tell me things like: 'show me concerts in New York' or 'concerts near me' "
         let welcomeMsg: Message = Message(content: content1, isMorgan: true)
-        let welcomeMsg2: Message = Message(content: content2, isMorgan: true)
         messages.append(welcomeMsg)
-        messages.append(welcomeMsg2)
-        
         
         tableView.allowsSelection = false
         tableView.estimatedRowHeight = 50
@@ -149,7 +145,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             theLabel.sizeToFit()
             let numCharsInLabel: CGFloat = CGFloat(countElements(theLabel.text!))
             let size = NSString(string: theLabel.text!).sizeWithAttributes([NSFontAttributeName: theLabel.font])
-            let setTxtWidth = (numCharsInLabel < 26) ? size.width : size.width / (numCharsInLabel / 28.0)
+            let setTxtWidth = (numCharsInLabel < 30) ? size.width : size.width / (numCharsInLabel / 26.0)
             let rect = CGRectMake(theLabel.frame.origin.x, theLabel.frame.origin.y, setTxtWidth, theLabel.frame.height)
             
 
@@ -180,7 +176,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             
             let size = NSString(string: theLabel.text!).sizeWithAttributes([NSFontAttributeName: theLabel.font])
             
-            let setTxtWidth = (numCharsInLabel < 26) ? size.width : size.width / (numCharsInLabel / 28.0)
+            let setTxtWidth = (numCharsInLabel < 30) ? size.width : size.width / (numCharsInLabel / 26.0)
             
             let widthOfScreen = UIScreen.mainScreen().applicationFrame.width
             let xCoord = widthOfScreen - setTxtWidth - 14
