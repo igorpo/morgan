@@ -50,7 +50,7 @@ def getKeywords(text):
 	if text is None:
 		exit("NLP app called without text input")
 
-	return_responses = {"Location": None, ``
+	return_responses = {"Location": None, 
 						"Artist": None, 
 				 		"Venue": None, 
 				 		"Date": None,
