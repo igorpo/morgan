@@ -36,5 +36,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Allow Morgan to use your location for shows near you!</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Always uses location</string>
 </dict>
 </plist>
