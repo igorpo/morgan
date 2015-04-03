@@ -10,8 +10,25 @@ def getDataFromURL(url):
     except:
         return None
 
-def searchForEvent(user_latitude= 40.7127, user_longitude= -74.0059, index=0):
-    url = "http://api.songkick.com/api/3.0/events.json?location=geo:" + str(user_latitude) + "," + str(user_longitude) + "&apikey=" + SK_APIKEY
+def _searchForLocation(location_name, index=0):
+    url = SK_URL + "search/locations.json?query="+ location_name +"&apikey=" + SK_APIKEY
+    data = getDataFromURL(url)
+    try:
+        results = data["resultsPage"]["results"]["location"]
+        location_id = results[index]["metroArea"]["id"]
+        return location_id
+    except:
+        return None
+
+def searchForEvent(location, user_latitude, user_longitude, index=0):
+    if location is None:
+        url = SK_URL + "events.json?location=geo:" + str(user_latitude) + "," + str(user_longitude) + "&apikey=" + SK_APIKEY
+    else:
+        id = _searchForLocation(location)
+        if id is not None:
+            url = SK_URL + "events.json?location=sk:" + str(id) + "&apikey=" + SK_APIKEY
+        else:
+            return None
     data = getDataFromURL(url)
     try:
         results = data["resultsPage"]["results"]["event"][index]
@@ -20,27 +37,32 @@ def searchForEvent(user_latitude= 40.7127, user_longitude= -74.0059, index=0):
         date = results["start"]["datetime"]
         return artist + " is playing at " + venue + " on " + date + "."
     except:
-        return "Hm no results."
+        return None
 
 def searchForArtist(artist_name):
-    url = "http://api.songkick.com/api/3.0/search/artists.json?query="+ artist_name +"&apikey=" + SK_APIKEY
+    url = SK_URL + "search/artists.json?query="+ artist_name +"&apikey=" + SK_APIKEY
     data = getDataFromURL(url)
 
 def searchForVenue(venue_name):
-    url = "http://api.songkick.com/api/3.0/search/venues.json?query="+ venue_name +"&apikey=" + SK_APIKEY
+    url = SK_URL + "search/venues.json?query="+ venue_name +"&apikey=" + SK_APIKEY
     data = getDataFromURL(url)
-
-def searchForLocation(location_name, index=0):
-    url = "http://api.songkick.com/api/3.0/search/locations.json?query="+ location_name +"&apikey=" + SK_APIKEY
-    data = getDataFromURL(url)
-    try:
-        results = data["resultsPage"]["results"]["location"]
-        location_id = results[index]["metroArea"]["id"]
-        print(location_id)
-        return location_id
-    except:
-        print("No location found.")
-        return None
 
 def searchByKeywords(dict, lat, long):
-    return searchForEvent(user_latitude= lat, user_longitude= long, index=0)
+    location = dict["Location"]
+    artist = dict["Artist"]
+    venue = dict["Venue"]
+    custom = dict["Custom"]
+    date = dict["Date"]
+    use_geo = dict["UseGeolocation"]
+
+    if use_geo:
+        return searchForEvent(None,lat,long, index=0)
+    if custom is not None:
+        return custom
+    elif location is not None:
+        return searchForEvent(Location,lat,long, index=0)
+    elif artist is not None:
+        return "Artist search doesn't exist yet. Try again."
+    else:
+        return None
+
