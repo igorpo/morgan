@@ -16,7 +16,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     let BOTTOM_CONSTRAINT: CGFloat = 10.0
     var userLoc: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 0, longitude: 0)
     var manager: CLLocationManager = CLLocationManager()
-
+    var didShowButtonsOnce : Bool = false
+    
     @IBOutlet var tableView: UITableView!
     @IBOutlet var messageTextField: UITextField!
     @IBOutlet var sendConstraint: NSLayoutConstraint!
@@ -45,10 +46,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         messages.append(message)
         updateTableView()
 
-        
-//        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-//            self.showAnswerButtons()
-//        })
+        println(content)
+        println(countElements(content))
+
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            if (!self.didShowButtonsOnce) {
+                self.showAnswerButtons()
+                self.didShowButtonsOnce = true
+            }
+
+        })
 
     }
     
@@ -291,18 +298,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         println(error)
     }
     
-//    /*
-//     * Pop over custom answer choices
-//     */
-//    func showAnswerButtons() {
-//        self.ansView = UIView(frame: CGRectMake(0, UIScreen.mainScreen().applicationFrame.height - KEYBOARD_HEIGHT, UIScreen.mainScreen().applicationFrame.width, KEYBOARD_HEIGHT + 20))
-//        self.ansView.backgroundColor = UIColor(red: 242 / 255.0, green: 242 / 255.0, blue: 242 / 255.0, alpha: 1)
-//
-//        self.view.addSubview(ansView)
-//            self.messageTextField.resignFirstResponder()
-//        generateAutoResponseButtons(["I'm down! Show me tickets.", "Not sure. Give me more info.", "Fuck you morgan. Show me something else!"])
-//        
-//    }
+    /*
+     * Pop over custom answer choices
+     */
+    func showAnswerButtons() {
+        self.ansView = UIView(frame: CGRectMake(0, UIScreen.mainScreen().applicationFrame.height - KEYBOARD_HEIGHT, UIScreen.mainScreen().applicationFrame.width, KEYBOARD_HEIGHT + 20))
+        self.ansView.backgroundColor = UIColor(red: 242 / 255.0, green: 242 / 255.0, blue: 242 / 255.0, alpha: 1)
+
+        self.view.addSubview(ansView)
+            self.messageTextField.resignFirstResponder()
+        generateAutoResponseButtons(["I'm down! Show me tickets.", "Not sure. Give me more info.", "Fuck you morgan. Show me something else!"])
+        
+    }
     
     func generateAutoResponseButtons(options : [String]) {
         var initialY : CGFloat = 40
