@@ -212,6 +212,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         })
     }
     
+    // MARK: keyboard code
+    
    /*
     * Resign textfield upon return
     */
@@ -300,33 +302,59 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     func showAnswerButtons() {
         self.ansView = UIView(frame: CGRectMake(0, UIScreen.mainScreen().applicationFrame.height - KEYBOARD_HEIGHT, UIScreen.mainScreen().applicationFrame.width, KEYBOARD_HEIGHT + 20))
         self.ansView.backgroundColor = UIColor(red: 242 / 255.0, green: 242 / 255.0, blue: 242 / 255.0, alpha: 1)
-
-        self.view.addSubview(ansView)
-            self.messageTextField.resignFirstResponder()
-        generateAutoResponseButtons(["I'm down! Show me tickets.", "Not sure. Give me more info.", "Fuck you morgan. Show me something else!"])
+        self.messageTextField.resignFirstResponder()
+        let transition = UIViewAnimationOptions.TransitionCrossDissolve
+        UIView.transitionWithView(self.view, duration: 0.8, options: transition, animations: {
+                                  self.view.addSubview(self.ansView)}, completion: nil)
         
+        
+        generateAutoResponseButtons(["I'm down! Show me tickets.", "Not sure. Give me more info.", "Fuck you morgan. Show me something else!"])
+        generateRemoveSubviewButton()
     }
     
+    // MARK: auto response code
+    
+    func generateRemoveSubviewButton() {
+        let delete = UIButton.buttonWithType(UIButtonType.Custom) as UIButton
+        delete.frame = CGRectMake(15, 10, 25, 25)
+        delete.setTitle("X", forState: UIControlState.Normal)
+        delete.layer.cornerRadius = 0.5 * delete.bounds.size.width
+        delete.layer.borderWidth = 2
+        delete.layer.borderColor = UIColor.blackColor().CGColor
+        delete.addTarget(self, action: "dismissAutoResponsePane", forControlEvents: .TouchUpInside)
+        delete.titleLabel?.font = UIFont(name: "HelveticaNeue", size: 16)
+        delete.titleLabel?.adjustsFontSizeToFitWidth = true
+        delete.titleLabel?.minimumScaleFactor = 0.2
+        delete.setTitleColor(UIColor.blackColor(), forState: UIControlState.Normal)
+        ansView.addSubview(delete)
+    }
+    
+    /*
+     * Auto response button generation
+     */
     func generateAutoResponseButtons(options : [String]) {
         var initialY : CGFloat = 40
         for option in options {
-            let likeBtn = UIButton.buttonWithType(UIButtonType.System) as UIButton
-            likeBtn.setTitle(option, forState: UIControlState.Normal)
-            likeBtn.frame = CGRectMake(15, initialY, UIScreen.mainScreen().applicationFrame.width - 30, 50)
-            likeBtn.titleLabel?.font = UIFont(name: "HelveticaNeue", size: 16)
-            likeBtn.titleLabel?.adjustsFontSizeToFitWidth = true
-            likeBtn.titleLabel?.minimumScaleFactor = 0.2
-            likeBtn.backgroundColor = UIColor.whiteColor()
-            likeBtn.setTitleColor(UIColor.blackColor(), forState: UIControlState.Normal)
-            likeBtn.layer.borderColor = UIColor.blackColor().CGColor
-            likeBtn.layer.borderWidth = 2
-            likeBtn.layer.cornerRadius = 5
-            initialY += likeBtn.frame.size.height + 10
-            likeBtn.addTarget(self, action: "sendMessageFromAutoRepsonseButton:", forControlEvents: .TouchUpInside)
-            self.ansView.addSubview(likeBtn)
+            let button = UIButton.buttonWithType(UIButtonType.System) as UIButton
+            button.setTitle(option, forState: UIControlState.Normal)
+            button.frame = CGRectMake(15, initialY, UIScreen.mainScreen().applicationFrame.width - 30, 50)
+            button.titleLabel?.font = UIFont(name: "HelveticaNeue", size: 16)
+            button.titleLabel?.adjustsFontSizeToFitWidth = true
+            button.titleLabel?.minimumScaleFactor = 0.2
+            button.backgroundColor = UIColor.whiteColor()
+            button.setTitleColor(UIColor.blackColor(), forState: UIControlState.Normal)
+            button.layer.borderColor = UIColor.blackColor().CGColor
+            button.layer.borderWidth = 2
+            button.layer.cornerRadius = 5
+            initialY += button.frame.size.height + 10
+            button.addTarget(self, action: "sendMessageFromAutoRepsonseButton:", forControlEvents: .TouchUpInside)
+            self.ansView.addSubview(button)
         }
     }
     
+    /* 
+     * Recreates a message from the auto button selection
+     */
     func sendMessageFromAutoRepsonseButton(sender : UIButton) {
         let messageText = sender.titleLabel?.text
         var message:Message = Message(content: messageText!, isMorgan: false)
@@ -336,8 +364,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         dismissAutoResponsePane()
     }
     
+    /*
+     * Dismisses auto-response
+     */
     func dismissAutoResponsePane() {
-        self.ansView.removeFromSuperview()
+        let transition = UIViewAnimationOptions.TransitionCrossDissolve
+        UIView.transitionWithView(self.view, duration: 0.8, options: transition, animations: {
+            self.ansView.removeFromSuperview()}, completion: nil)
+        
         
     }
 }
