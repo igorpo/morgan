@@ -96,6 +96,14 @@ def queryMorgan():
     return "Lat is " + str(lat) + " and Lon " + str(long)
     '''
 
+@app.route('/test', methods=['POST'])
+@crossdomain(origin='*')
+def test1():
+    data = request.form["user_raw_data"]
+    lat = request.form["user_lat"]
+    long = request.form["user_lon"]
+    return("Your query: " + data + ".\n Your lat: " + lat + ".\n Your lon: " + long + ".")
+
 def test(mystring):
     # Get map of keywords back from NLP
     data = mystring
@@ -103,6 +111,7 @@ def test(mystring):
     long = -75.1667
 
     keywords = nlp.getKeywords(data)
+    print(keywords)
 
     # Seach SK based on keywords
     return_string = sk.searchByKeywords(keywords, lat, long)

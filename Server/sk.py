@@ -42,6 +42,14 @@ def searchForEvent(location, user_latitude, user_longitude, index=0):
 def searchForArtist(artist_name):
     url = SK_URL + "search/artists.json?query="+ artist_name +"&apikey=" + SK_APIKEY
     data = getDataFromURL(url)
+    try:
+        result = data["resultsPage"]["results"]["artist"][0]["displayName"]
+        result.replace(" ","+")
+        itunes_data = getDataFromURL('https://itunes.apple.com/search?term='+ result +'&limit=1')
+        preview = itunes_data["results"][0]["previewUrl"]
+        return preview
+    except:
+        return None
 
 def searchForVenue(venue_name):
     url = SK_URL + "search/venues.json?query="+ venue_name +"&apikey=" + SK_APIKEY
@@ -62,7 +70,7 @@ def searchByKeywords(dict, lat, long):
     elif location is not None:
         return searchForEvent(location,lat,long, index=0)
     elif artist is not None:
-        return "Artist search doesn't exist yet. Try again."
+        return searchForArtist(artist)
     else:
         return None
 
