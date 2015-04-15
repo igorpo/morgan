@@ -38,7 +38,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             var message:Message = Message(content: messageTextField.text, isMorgan: false)
             messages.append(message)
             updateTableView()
-            Server.getPreviewSong(message.content)
+//            Server.getPreviewSong(message.content)
             /*
             we need to keep the name of the artist as retrieved by the nlp locally
             then when the user wants a preview, we need to call this method:             Server.getPreviewSong(<artist's name goes here>)
@@ -83,6 +83,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         sender.set
     }
     
+    
     /*
      * Here we add delegates to TableView, and TextField, along with dynamic resizing of cells based on their content.
      * We also set the keyboard observers to capture all events with the keyboard popping up. 
@@ -94,9 +95,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         messageTextField.delegate = self
         
         setUpLocation()
-        
-
-        
         let content1 = "Hello! I'm Morgan! Tell me things like: 'show me concerts in New York' or 'concerts near me' "
         let welcomeMsg: Message = Message(content: content1, isMorgan: true)
         messages.append(welcomeMsg)
@@ -112,10 +110,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "morganAnswers", name:"morganAnsweredNotification", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "makePlayActive", name:"previewURLNotification", object: nil)
 //        previewURLNotification
-
-
         txtFieldConstraint.constant = BOTTOM_CONSTRAINT
         sendConstraint.constant = BOTTOM_CONSTRAINT
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        verifyLocationServicesOn()
+
     }
     
    /*
@@ -303,6 +305,37 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     }
     
     /*
+    * verifies location services authorization status and shows appropriate message
+    */
+    func verifyLocationServicesOn() {
+        switch CLLocationManager.authorizationStatus() {
+        case .Authorized, .AuthorizedWhenInUse:
+            // ...
+            println("location is authorized we're chilling")
+            return
+        case .NotDetermined:
+            manager.requestAlwaysAuthorization()
+            break;
+        case .Restricted, .Denied:
+            let alertController = UIAlertController(
+                title: "Location Access Disabled",
+                message: "To let Morgan do her magic, please open this app's settings and set location access to 'While Using the App'.",
+                preferredStyle: .Alert)
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+            alertController.addAction(cancelAction)
+            
+            let openAction = UIAlertAction(title: "Open Settings", style: .Default) { (action) in
+                if let url = NSURL(string:UIApplicationOpenSettingsURLString) {
+                    UIApplication.sharedApplication().openURL(url)
+                }
+            }
+            alertController.addAction(openAction)
+            
+            self.presentViewController(alertController, animated: true, completion: nil)
+        }
+    }
+    /*
      * Update location
      */
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
@@ -337,8 +370,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         
         
         generateAutoResponseButtons(["I'm down! Show me tickets.", "Not sure. Give me more info.", "Fuck you morgan. Show me something else!"])
+        
         generateRemoveSubviewButton()
     }
+    
+    
     
     // MARK: auto response code
     
@@ -399,7 +435,20 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         let transition = UIViewAnimationOptions.TransitionCrossDissolve
         UIView.transitionWithView(self.view, duration: 0.8, options: transition, animations: {
             self.ansView.removeFromSuperview()}, completion: nil)
+    }
+    
+    
+    func showTicketsLink() {
         
+    }
+    
+    
+    func showPreviewSong() {
+        
+    }
+    
+    
+    func showNextResult() {
         
     }
 }
