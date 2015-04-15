@@ -41,8 +41,6 @@ class Server: NSObject {
         var new_name = artist_name.stringByReplacingOccurrencesOfString(" ", withString: "+", options: NSStringCompareOptions.LiteralSearch, range: nil)
         let request = NSMutableURLRequest(URL: NSURL(string: "https://jbartolozzi.pythonanywhere.com/\(new_name)/preview")!)
         request.HTTPMethod = "POST"
-//        let postString = "user_raw_data=\(rawUserInput)&user_lat=\(lat)&user_lon=\(lon)"
-//        request.HTTPBody = postString.dataUsingEncoding(NSUTF8StringEncoding)
         let queue: NSOperationQueue = NSOperationQueue()
         NSURLConnection.sendAsynchronousRequest(request, queue: queue, completionHandler: {
             (response: NSURLResponse!, data: NSData!, error: NSError!) -> Void in

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="nCN-HK-t0z">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6751" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="nCN-HK-t0z">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -94,18 +94,10 @@
                             <constraint firstItem="vs3-uo-JQT" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" constant="-7" id="zfv-EM-nZH"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="morgan" id="eQB-T7-4Gx">
-                        <barButtonItem key="rightBarButtonItem" enabled="NO" systemItem="play" id="8nS-s9-9Fu">
-                            <color key="tintColor" red="0.63505557429417347" green="0.1925615020128664" blue="0.88581123737373735" alpha="1" colorSpace="calibratedRGB"/>
-                            <connections>
-                                <action selector="tapPlay:" destination="vXZ-lx-hvc" id="XoY-FJ-7ZK"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="morgan" id="eQB-T7-4Gx"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
                         <outlet property="messageTextField" destination="vs3-uo-JQT" id="Cgw-gt-A0H"/>
-                        <outlet property="playButtonOutlet" destination="8nS-s9-9Fu" id="rqj-Mp-WbI"/>
                         <outlet property="sendConstraint" destination="u1w-Qo-BAd" id="fBd-Kt-OyB"/>
                         <outlet property="tableView" destination="x1O-yt-hoX" id="nph-Gh-oPN"/>
                         <outlet property="txtFieldConstraint" destination="GNj-82-xRg" id="2T9-Rc-xO7"/>

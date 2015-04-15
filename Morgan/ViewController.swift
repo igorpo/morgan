@@ -12,11 +12,12 @@ import CoreLocation
 
 var KEYBOARD_HEIGHT: CGFloat = 0
 class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate, CLLocationManagerDelegate {
-    @IBOutlet var playButtonOutlet: UIBarButtonItem!
+//    @IBOutlet var playButtonOutlet: UIBarButtonItem!
     
     var currentSongUrl = ""
     
     var player = AVPlayer()
+//    var player = AVAudioPlayer()
     
     var ansView : UIView = UIView()
     let BOTTOM_CONSTRAINT: CGFloat = 10.0
@@ -38,12 +39,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             var message:Message = Message(content: messageTextField.text, isMorgan: false)
             messages.append(message)
             updateTableView()
-//            Server.getPreviewSong(message.content)
+            Server.getPreviewSong(message.content)
             /*
             we need to keep the name of the artist as retrieved by the nlp locally
             then when the user wants a preview, we need to call this method:             Server.getPreviewSong(<artist's name goes here>)
             */
-            Server.postToServer(message.content, lat: Double(userLoc.latitude), lon: Double(userLoc.longitude))
+//            Server.postToServer(message.content, lat: Double(userLoc.latitude), lon: Double(userLoc.longitude))
         }
         messageTextField.text = ""
     }
@@ -71,16 +72,35 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     }
     
     func makePlayActive() {
-        playButtonOutlet.enabled = true
+        println("got a song back")
+        let button = UIBarButtonItem(barButtonSystemItem:UIBarButtonSystemItem.Play, target: self, action: "tapPlay:")
+        self.navigationController?.navigationBar.topItem?.rightBarButtonItem = button
+//        self.navigationItem.rightBarButtonItem = button
     }
     
-    @IBAction func tapPlay(sender: AnyObject) {
+    func tapPlay(sender: AnyObject) {
         currentSongUrl = previewURL
+        
+        // if player exists, resume instead of play
+        
         let pItem = AVPlayerItem(URL: NSURL(string: currentSongUrl))
         player = AVPlayer(playerItem: pItem)
-        player.rate = 1.0;
+//        player = AVAudioPlayer(contentsOfURL: NSURL(string: currentSongUrl), error: nil)
+        player.rate = 1.0
+        
         player.play()
-        sender.set
+
+        //change to pause
+        let button = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Pause, target: self, action: "pauseMusic")
+        self.navigationController?.navigationBar.topItem?.rightBarButtonItem? = button
+
+
+    }
+    
+    func pauseMusic() {
+        player.pause()
+        let button = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Play, target: self, action: "tapPlay:")
+        self.navigationController?.navigationBar.topItem?.rightBarButtonItem? = button
     }
     
     
@@ -309,8 +329,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     */
     func verifyLocationServicesOn() {
         switch CLLocationManager.authorizationStatus() {
-        case .Authorized, .AuthorizedWhenInUse:
-            // ...
+        case /*.Authorized,*/ .AuthorizedWhenInUse:
             println("location is authorized we're chilling")
             return
         case .NotDetermined:
@@ -333,6 +352,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             alertController.addAction(openAction)
             
             self.presentViewController(alertController, animated: true, completion: nil)
+        default:
+            break;
         }
     }
     /*
