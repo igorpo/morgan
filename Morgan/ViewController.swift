@@ -44,7 +44,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             we need to keep the name of the artist as retrieved by the nlp locally
             then when the user wants a preview, we need to call this method:             Server.getPreviewSong(<artist's name goes here>)
             */
-//            Server.postToServer(message.content, lat: Double(userLoc.latitude), lon: Double(userLoc.longitude))
+            Server.postToServer(message.content, lat: Double(userLoc.latitude), lon: Double(userLoc.longitude))
         }
         messageTextField.text = ""
     }
@@ -69,6 +69,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
 
         })
 
+    }
+    
+    func removeBarButton() {
+        self.navigationController?.navigationBar.topItem?.rightBarButtonItem = nil
+        player.pause()
     }
     
     func makePlayActive() {
@@ -128,7 +133,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "morganAnswers", name:"morganAnsweredNotification", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "makePlayActive", name:"previewURLNotification", object: nil)
+//        NSNotificationCenter.defaultCenter().addObserver(self, selector: "makePlayActive", name:"previewURLNotification", object: nil)
 //        previewURLNotification
         txtFieldConstraint.constant = BOTTOM_CONSTRAINT
         sendConstraint.constant = BOTTOM_CONSTRAINT
@@ -309,6 +314,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                 })
             }
         }
+        removeBarButton()
+        
     }
     
 
@@ -419,6 +426,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
      */
     func generateAutoResponseButtons(options : [String]) {
         var initialY : CGFloat = 40
+        var i : Int = 900
         for option in options {
             let button = UIButton.buttonWithType(UIButtonType.System) as! UIButton
             button.setTitle(option, forState: UIControlState.Normal)
@@ -431,21 +439,31 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             button.layer.borderColor = UIColor.blackColor().CGColor
             button.layer.borderWidth = 2
             button.layer.cornerRadius = 5
+            button.tag = i
+            i++
             initialY += button.frame.size.height + 10
-            button.addTarget(self, action: "sendMessageFromAutoRepsonseButton:", forControlEvents: .TouchUpInside)
+//            button.addTarget(self, action: "sendMessageFromAutoRepsonseButton:", forControlEvents: .TouchUpInside)
             self.ansView.addSubview(button)
         }
+//        ["I'm down! Show me tickets.", "Not sure. Give me more info.", "Fuck you morgan. Show me something else!"]
+        let button1: UIButton = self.view.viewWithTag(900) as! UIButton
+        let button2: UIButton = self.view.viewWithTag(901) as! UIButton
+        let button3: UIButton = self.view.viewWithTag(902) as! UIButton
+        button1.addTarget(self, action: "showTicketsLink", forControlEvents: .TouchUpInside)
+        button2.addTarget(self, action: "showPreviewSong", forControlEvents: .TouchUpInside)
+        button3.addTarget(self, action: "showNextResult", forControlEvents: .TouchUpInside)
+        
     }
     
     /* 
      * Recreates a message from the auto button selection
      */
-    func sendMessageFromAutoRepsonseButton(sender : UIButton) {
-        let messageText = sender.titleLabel?.text
-        var message:Message = Message(content: messageText!, isMorgan: false)
+    func sendMorganMessageFromAutoRepsonseButton(message : String) {
+        let messageText = message
+        var message:Message = Message(content: messageText, isMorgan: true)
         messages.append(message)
         updateTableView()
-        Server.postToServer(message.content, lat: Double(userLoc.latitude), lon: Double(userLoc.longitude))
+//        Server.postToServer(message.content, lat: Double(userLoc.latitude), lon: Double(userLoc.longitude))
         dismissAutoResponsePane()
     }
     
@@ -465,7 +483,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     
     
     func showPreviewSong() {
-        
+        makePlayActive()
+        sendMorganMessageFromAutoRepsonseButton("Here! Tap the play button in the top right corner to hear some tunes by this artist")
     }
     
     
