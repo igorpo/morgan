@@ -7,11 +7,17 @@
 //
 
 import UIKit
-
+import AVFoundation
 import CoreLocation
 
 var KEYBOARD_HEIGHT: CGFloat = 0
 class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate, CLLocationManagerDelegate {
+    @IBOutlet var playButtonOutlet: UIBarButtonItem!
+    
+    var currentSongUrl = ""
+    
+    var player = AVPlayer()
+    
     var ansView : UIView = UIView()
     let BOTTOM_CONSTRAINT: CGFloat = 10.0
     var userLoc: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 0, longitude: 0)
@@ -32,6 +38,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             var message:Message = Message(content: messageTextField.text, isMorgan: false)
             messages.append(message)
             updateTableView()
+            Server.getPreviewSong(message.content)
+            /*
+            we need to keep the name of the artist as retrieved by the nlp locally
+            then when the user wants a preview, we need to call this method:             Server.getPreviewSong(<artist's name goes here>)
+            */
             Server.postToServer(message.content, lat: Double(userLoc.latitude), lon: Double(userLoc.longitude))
         }
         messageTextField.text = ""
@@ -59,6 +70,19 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
 
     }
     
+    func makePlayActive() {
+        playButtonOutlet.enabled = true
+    }
+    
+    @IBAction func tapPlay(sender: AnyObject) {
+        currentSongUrl = previewURL
+        let pItem = AVPlayerItem(URL: NSURL(string: currentSongUrl))
+        player = AVPlayer(playerItem: pItem)
+        player.rate = 1.0;
+        player.play()
+        sender.set
+    }
+    
     /*
      * Here we add delegates to TableView, and TextField, along with dynamic resizing of cells based on their content.
      * We also set the keyboard observers to capture all events with the keyboard popping up. 
@@ -70,6 +94,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         messageTextField.delegate = self
         
         setUpLocation()
+        
+
         
         let content1 = "Hello! I'm Morgan! Tell me things like: 'show me concerts in New York' or 'concerts near me' "
         let welcomeMsg: Message = Message(content: content1, isMorgan: true)
@@ -84,6 +110,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "morganAnswers", name:"morganAnsweredNotification", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "makePlayActive", name:"previewURLNotification", object: nil)
+//        previewURLNotification
 
 
         txtFieldConstraint.constant = BOTTOM_CONSTRAINT
@@ -269,7 +297,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
      */
     func setUpLocation() {
         manager.delegate = self
-        manager.desiredAccuracy = kCLLocationAccuracyKilometer
+        manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
         manager.requestWhenInUseAuthorization()
         manager.startUpdatingLocation()
     }
