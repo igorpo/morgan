@@ -8,21 +8,19 @@ autoresponses = ["I'm down! Show me tickets.",
 
 geolocation_phrases = ["nearby", "near me", "shows", "concerts", "tonight"]
 
-
-
 def parse_text(text, return_responses):
 	if text == autoresponses[0]:
 		return_responses["Custom"] = "Sorry, can't find those tickets yet. Enter a new query!"
 		return return_responses
 	if text == autoresponses[1]:
-		return_responses["Custom"] = "Soon we'll be able to link to some songs. For now, enter a new query!"
+		return_responses["Custom"] = "link"
 		return return_responses
 	if text == autoresponses[2]:
 		return_responses["Custom"] = "Sorry, soon we'll show other options. For now, enter a new query."
 		return return_responses
 
-
 	sentences = nltk.sent_tokenize(text)
+
 	for sent in sentences:
          for chunk in nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(sent))):
              if hasattr(chunk, 'label'):
@@ -41,23 +39,23 @@ def parse_text(text, return_responses):
 			return return_responses
 
 
-	return_responses["Custom"] = "Sorry, didn't recognize that. Enter a new query!"            	
+	return_responses["Custom"] = "Sorry, didn't recognize that. Enter a new query!"
 	return return_responses
 
 
 
 def getKeywords(text):
-
-	return_responses = {"Location": None, 
-						"Artist": None, 
-				 		"Venue": None, 
+    # return text
+	return_responses = {"Location": None,
+						"Artist": None,
+				 		"Venue": None,
 				 		"Date": None,
-				 		"Custom": None, 
+				 		"Custom": None,
 				 		"UseGeolocation": None}
-	
-	parse_text(text, return_responses)
 
-	#for p in return_responses:	print p, ",", return_responses[p]
-	return return_responses
+	return parse_text(text, return_responses)
+
+# 	for p in return_responses:	print p, ",", return_responses[p]
+# 	return return_responses
 
 
