@@ -14,6 +14,9 @@ LOCATION = "location"
 # ARTIST = (String) artist's name
 ARTIST = "artist"
 
+# PREVIEW = (String) link to itunes .m4a preview file
+PREVIEW = "preview"
+
 # VENUE = (String) venue name
 VENUE = "venue"
 VENUENUM = "venue_number"
