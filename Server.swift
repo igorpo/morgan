@@ -27,8 +27,8 @@ class Server: NSObject {
             }
             println("Response: \(response)")
             if let responseString = NSString(data: data, encoding: NSUTF8StringEncoding) {
-                morganResponse = responseString
-                println("Response String: " + responseString)
+                morganResponse = responseString as String
+                println("Response String: " + (responseString as String))
                 //morganAnsweredNotification
                 NSNotificationCenter.defaultCenter().postNotificationName("morganAnsweredNotification", object: nil)
             }
@@ -50,9 +50,9 @@ class Server: NSObject {
             }
             println("Response: \(response)")
             if let responseString = NSString(data: data, encoding: NSUTF8StringEncoding) {
-                previewURL = responseString
+                previewURL = responseString as String
 //                return responseString
-                println("Response String: " + responseString)
+                println("Response String: " + (responseString as String))
                 //morganAnsweredNotification
                 NSNotificationCenter.defaultCenter().postNotificationName("previewURLNotification", object: nil)
             }

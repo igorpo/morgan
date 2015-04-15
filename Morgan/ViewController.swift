@@ -59,7 +59,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         updateTableView()
 
         println(content)
-        println(countElements(content))
+        println(count(content))
 
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             if (!self.didShowButtonsOnce) {
@@ -177,11 +177,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             cellIdentifier = "userMessageCell"
         }
 
-        var cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as UITableViewCell
+        var cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as! UITableViewCell
         
         // prevent appending layers on layers
         cell.contentView.viewWithTag(500)?.removeFromSuperview()
-        var theLabel : UILabel = cell.viewWithTag(1) as UILabel
+        var theLabel : UILabel = cell.viewWithTag(1) as! UILabel
         theLabel.font = theLabel.font.fontWithSize(17)
         
         if cellIdentifier == "morganCell" {
@@ -193,7 +193,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             theLabel.text = messages[indexPath.row].content
             
             theLabel.sizeToFit()
-            let numCharsInLabel: CGFloat = CGFloat(countElements(theLabel.text!))
+            let numCharsInLabel: CGFloat = CGFloat(count(theLabel.text!))
             let size = NSString(string: theLabel.text!).sizeWithAttributes([NSFontAttributeName: theLabel.font])
             let setTxtWidth = (numCharsInLabel < 30) ? size.width : size.width / (numCharsInLabel / 26.0)
             let rect = CGRectMake(theLabel.frame.origin.x, theLabel.frame.origin.y, setTxtWidth, theLabel.frame.height)
@@ -217,9 +217,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             theLabel.lineBreakMode = .ByWordWrapping
             theLabel.numberOfLines = 0
             theLabel.text = messages[indexPath.row].content
-            
+            theLabel.textAlignment = .Left
             theLabel.sizeToFit()
-            let numCharsInLabel = CGFloat(countElements(theLabel.text!))
+            let numCharsInLabel = CGFloat(count(theLabel.text!))
             if (numCharsInLabel < 26) {
                 theLabel.textAlignment = .Right
             }
@@ -229,7 +229,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             let setTxtWidth = (numCharsInLabel < 30) ? size.width : size.width / (numCharsInLabel / 26.0)
             
             let widthOfScreen = UIScreen.mainScreen().applicationFrame.width
-            let xCoord = widthOfScreen - setTxtWidth - 14
+            let xCoord = widthOfScreen - setTxtWidth - 20
             
             let rect = CGRectMake(xCoord, theLabel.frame.origin.y, setTxtWidth, theLabel.frame.height)
 
@@ -360,7 +360,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
      * Update location
      */
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
-        var userLocation = locations[0] as CLLocation
+        var userLocation = locations[0] as!CLLocation
         
         let lat = userLocation.coordinate.latitude
         let lon = userLocation.coordinate.longitude
@@ -400,7 +400,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     // MARK: auto response code
     
     func generateRemoveSubviewButton() {
-        let delete = UIButton.buttonWithType(UIButtonType.Custom) as UIButton
+        let delete = UIButton.buttonWithType(UIButtonType.Custom) as! UIButton
         delete.frame = CGRectMake(15, 10, 25, 25)
         delete.setTitle("X", forState: UIControlState.Normal)
         delete.layer.cornerRadius = 0.5 * delete.bounds.size.width
@@ -420,7 +420,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     func generateAutoResponseButtons(options : [String]) {
         var initialY : CGFloat = 40
         for option in options {
-            let button = UIButton.buttonWithType(UIButtonType.System) as UIButton
+            let button = UIButton.buttonWithType(UIButtonType.System) as! UIButton
             button.setTitle(option, forState: UIControlState.Normal)
             button.frame = CGRectMake(15, initialY, UIScreen.mainScreen().applicationFrame.width - 30, 50)
             button.titleLabel?.font = UIFont(name: "HelveticaNeue", size: 16)
