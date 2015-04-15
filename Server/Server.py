@@ -20,6 +20,7 @@ else:
     basestring = basestring
 
 app = Flask(__name__)
+app.debug = True
 
 def crossdomain(origin=None, methods=None, headers=None,
                 max_age=21600, attach_to_all=True,
@@ -66,57 +67,75 @@ def crossdomain(origin=None, methods=None, headers=None,
 @app.route('/', methods=['POST'])
 @crossdomain(origin='*')
 def queryMorgan():
-    #data = request.form["user_raw_data"]
-    #lat = request.form["user_lat"]
-    #long = request.form["user_lon"]
-    #return sk.searchByKeywords(None, lat, long)
     try:
-        # Get map of keywords back from NLP
-        data = request.form["user_raw_data"]
-        lat = request.form["user_lat"]
-        long = request.form["user_lon"]
+        data = str(request.form["user_raw_data"])
+        lat = float(request.form["user_lat"])
+        lon = float(request.form["user_lon"])
+        index = int(request.form["user_index"])
         keywords = nlp.getKeywords(data)
 
-        # Seach SK based on keywords
-        return_string = sk.searchByKeywords(keywords, lat, long)
+        return_string = sk.searchByKeywords(keywords, lat, lon, index)
+        # return """Keywords """ + str(keywords) + """ lat: """ + str(lat) + """ lon: """ + str(lon)
+        return str(return_string)
+
+    except Exception as e:
+        return """Exception! queryMorgan """ + str(e)
 
         # Send synthesized string from NLP back to device
+'''
+def createReturnData():
+    text =
+    {
+        "response":"Blah blah",
+        "audio":".m4a",
+        "tickets":"http:songkick...",
+        "search_index":0
+    }
+'''
+@app.route('/<artist_name>/preview', methods=['POST'])
+@crossdomain(origin='*')
+def getPreviewSong(artist_name):
+    try:
+        return sk.getPreviewSong(artist_name)
+    except Exception as e:
+        return """Exception! getPreviewSong """ + str(e)
+    # except:
+        # return_string = None
 
-    except:
-        return_string = None
+    # if return_string is None:
+        # return_string = "Hmm. Looks like something went wrong. Let me call my IT person."
 
-    if return_string is None:
-        return_string = "Hmm. Looks like something went wrong. Let me call my IT person."
+    #return return_string
 
-    return return_string
-    '''
-    data = request.form["user_raw_data"]
-    lat = request.form["user_lat"]
-    long = request.form["user_lon"]
-    return "Lat is " + str(lat) + " and Lon " + str(long)
-    '''
+# def test(mystring):
+#     # Get map of keywords back from NLP
+#     data = mystring
+#     lat = 39.9500
+#     long = -75.1667
+
+#     keywords = nlp.getKeywords(data)
+
+#     # Seach SK based on keywords
+#     return_string = sk.searchByKeywords(keywords, lat, long)
+
+#     if return_string is None:
+#         return_string = "Hmm. Looks like something went wrong. Let me call my IT fucker."
+
+#     return return_string
+
+
+# #app.secret_key = 'This is really unique and secret'
 
 @app.route('/test', methods=['POST'])
 @crossdomain(origin='*')
-def test1():
-    data = request.form["user_raw_data"]
-    lat = request.form["user_lat"]
-    long = request.form["user_lon"]
-    return("Your query: " + data + ".\n Your lat: " + lat + ".\n Your lon: " + long + ".")
-
-def test(mystring):
-    # Get map of keywords back from NLP
-    data = mystring
-    lat = 39.9500
-    long = -75.1667
-
-    keywords = nlp.getKeywords(data)
-    print(keywords)
-
-    # Seach SK based on keywords
-    return_string = sk.searchByKeywords(keywords, lat, long)
-
-    if return_string is None:
-        return_string = "Hmm. Looks like something went wrong. Let me call my IT fucker."
-
-    return return_string
+def hello_person():
+    return """testReturn"""
+    # return """
+    #     <p>Input sample code.</p>
+    #     <form method="POST" action="%s">
+    #     <input name="user_raw_data" />
+    #     <input name="user_lat" />
+    #     <input name="user_lon" />
+    #     <input type="submit" value="Go!" />
+    #     </form>
+    #     """ % (url_for('queryMorgan'),)
