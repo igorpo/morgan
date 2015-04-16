@@ -12,12 +12,11 @@ import CoreLocation
 
 var KEYBOARD_HEIGHT: CGFloat = 0
 class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate, CLLocationManagerDelegate {
-//    @IBOutlet var playButtonOutlet: UIBarButtonItem!
     
     var currentSongUrl = ""
     
     var player = AVPlayer()
-//    var player = AVAudioPlayer()
+    var typingLabel : UILabel = UILabel()
     
     var ansView : UIView = UIView()
     let BOTTOM_CONSTRAINT: CGFloat = 10.0
@@ -32,6 +31,65 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     var messages: [Message] = []
     
     /*
+    * Here we add delegates to TableView, and TextField, along with dynamic resizing of cells based on their content.
+    * We also set the keyboard observers to capture all events with the keyboard popping up.
+    */
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        createMorganTitleAndSubtitle()
+        self.tableView.delegate = self
+        messageTextField.delegate = self
+        
+        setUpLocation()
+        let content1 = "Hello! I'm Morgan! Tell me things like: 'show me concerts in New York' or 'concerts near me' "
+        let welcomeMsg: Message = Message(content: content1, isMorgan: true)
+        messages.append(welcomeMsg)
+        
+        tableView.allowsSelection = false
+        tableView.estimatedRowHeight = 50
+        tableView.rowHeight = UITableViewAutomaticDimension
+        
+        self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "morganAnswers", name:"morganAnsweredNotification", object: nil)
+        //        NSNotificationCenter.defaultCenter().addObserver(self, selector: "makePlayActive", name:"previewURLNotification", object: nil)
+        txtFieldConstraint.constant = BOTTOM_CONSTRAINT
+        sendConstraint.constant = BOTTOM_CONSTRAINT
+    }
+    
+    /*
+     * Apple's view call
+     */
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        verifyLocationServicesOn()
+        
+    }
+
+    /*
+     * Add a title/subtitle for Morgan and "typing..."
+     */
+    func createMorganTitleAndSubtitle() {
+        var titleRect : UIView = UIView(frame: CGRectMake(0, 0, 120, 36))
+        var morganLabel : UILabel = UILabel(frame: CGRectMake(0, 0, 120, 30))
+        morganLabel.font = UIFont(name: "HelveticaNeue-Medium", size: 19.0)
+        morganLabel.text = "Morgan"
+        morganLabel.textAlignment = .Center
+        
+        typingLabel = UILabel(frame: CGRectMake(0, 22, 120, 20))
+        typingLabel.text = "Morgan is typing..."
+        typingLabel.font = UIFont(name: "HelveticaNeue", size: 9.0)
+        typingLabel.textAlignment = .Center
+
+        titleRect.addSubview(morganLabel)
+        titleRect.addSubview(typingLabel)
+        self.navigationItem.titleView = titleRect
+        typingLabel.hidden = true
+    }
+
+    /*
      * Sends a message from the user
      */
     @IBAction func sendMessage(sender: AnyObject) {
@@ -40,6 +98,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             messages.append(message)
             updateTableView()
             Server.getPreviewSong(message.content)
+            showMorganIsTyping()
+            
             /*
             we need to keep the name of the artist as retrieved by the nlp locally
             then when the user wants a preview, we need to call this method:             Server.getPreviewSong(<artist's name goes here>)
@@ -55,6 +115,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     func morganAnswers () {
         let content = morganResponse
         var message:Message = Message(content: content, isMorgan: true)
+        typingLabel.hidden = true
         messages.append(message)
         updateTableView()
 
@@ -71,18 +132,25 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
 
     }
     
+    /*
+     * remove play button when user starts querying again
+     */
     func removeBarButton() {
         self.navigationController?.navigationBar.topItem?.rightBarButtonItem = nil
         player.pause()
     }
     
+    /*
+     * Fires from a response
+     */
     func makePlayActive() {
-        println("got a song back")
         let button = UIBarButtonItem(barButtonSystemItem:UIBarButtonSystemItem.Play, target: self, action: "tapPlay:")
         self.navigationController?.navigationBar.topItem?.rightBarButtonItem = button
-//        self.navigationItem.rightBarButtonItem = button
     }
     
+    /*
+     * Play itunes preview
+     */
     func tapPlay(sender: AnyObject) {
         currentSongUrl = previewURL
         
@@ -90,7 +158,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         
         let pItem = AVPlayerItem(URL: NSURL(string: currentSongUrl))
         player = AVPlayer(playerItem: pItem)
-//        player = AVAudioPlayer(contentsOfURL: NSURL(string: currentSongUrl), error: nil)
         player.rate = 1.0
         
         player.play()
@@ -98,52 +165,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         //change to pause
         let button = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Pause, target: self, action: "pauseMusic")
         self.navigationController?.navigationBar.topItem?.rightBarButtonItem? = button
-
-
     }
     
+    /*
+     * Pause player
+     */
     func pauseMusic() {
         player.pause()
         let button = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Play, target: self, action: "tapPlay:")
         self.navigationController?.navigationBar.topItem?.rightBarButtonItem? = button
     }
     
-    
-    /*
-     * Here we add delegates to TableView, and TextField, along with dynamic resizing of cells based on their content.
-     * We also set the keyboard observers to capture all events with the keyboard popping up. 
-     */
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        self.tableView.delegate = self
-        messageTextField.delegate = self
-        
-        setUpLocation()
-        let content1 = "Hello! I'm Morgan! Tell me things like: 'show me concerts in New York' or 'concerts near me' "
-        let welcomeMsg: Message = Message(content: content1, isMorgan: true)
-        messages.append(welcomeMsg)
-        
-        tableView.allowsSelection = false
-        tableView.estimatedRowHeight = 50
-        tableView.rowHeight = UITableViewAutomaticDimension
-
-        self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None
-        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "morganAnswers", name:"morganAnsweredNotification", object: nil)
-//        NSNotificationCenter.defaultCenter().addObserver(self, selector: "makePlayActive", name:"previewURLNotification", object: nil)
-//        previewURLNotification
-        txtFieldConstraint.constant = BOTTOM_CONSTRAINT
-        sendConstraint.constant = BOTTOM_CONSTRAINT
-    }
-    
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        verifyLocationServicesOn()
-
-    }
     
    /*
     * Apple's standard
@@ -257,9 +289,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     * Properly reloads the messages in the conversation to move them accordingly.
     */
     func updateTableView() {
-
+        removeMorganIsTyping()
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.tableView.reloadData()
+
             self.tableView.layoutIfNeeded()
             if self.tableView.contentSize.height > self.tableView.frame.size.height {
                 self.tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: self.messages.count - 1, inSection: 0), atScrollPosition: UITableViewScrollPosition.Bottom, animated: true)
@@ -445,7 +478,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
 //            button.addTarget(self, action: "sendMessageFromAutoRepsonseButton:", forControlEvents: .TouchUpInside)
             self.ansView.addSubview(button)
         }
-//        ["I'm down! Show me tickets.", "Not sure. Give me more info.", "Fuck you morgan. Show me something else!"]
         let button1: UIButton = self.view.viewWithTag(900) as! UIButton
         let button2: UIButton = self.view.viewWithTag(901) as! UIButton
         let button3: UIButton = self.view.viewWithTag(902) as! UIButton
@@ -490,5 +522,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     
     func showNextResult() {
         
+    }
+    
+    
+    func showMorganIsTyping() {
+        typingLabel.hidden = false
+    }
+    
+    func removeMorganIsTyping() {
+        typingLabel.hidden = true
     }
 }

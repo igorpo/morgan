@@ -51,7 +51,6 @@ class Server: NSObject {
             println("Response: \(response)")
             if let responseString = NSString(data: data, encoding: NSUTF8StringEncoding) {
                 previewURL = responseString as String
-//                return responseString
                 println("Response String: " + (responseString as String))
                 //morganAnsweredNotification
                 NSNotificationCenter.defaultCenter().postNotificationName("previewURLNotification", object: nil)
