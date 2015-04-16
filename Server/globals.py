@@ -4,11 +4,13 @@
 # CODE = (Integer) type of query received
 #	0  = unrecognized query
 #	1  = shows near me query
-#	2  = shows by an artist
-#	3  = shows at a venue
+#   2  = shows by non-default location
+#	3  = shows by an artist
+#	4  = shows at a venue
 CODE = "code"
 
-# LOCATION = (String) zip code of the location of interest, geolocation of device by default
+# LOCATION = (String) city name of the location of interest, 
+#            geolocation of device by default (if LOCATION field is nil)
 LOCATION = "location"
 
 # ARTIST = (String) artist's name
@@ -37,5 +39,6 @@ MESSAGE = "message"
 # Dictionary Keys
 TICKET = "ticket"
 PREVIEW = "preview"
+SHOW = "show"
 
 
