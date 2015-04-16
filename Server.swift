@@ -13,7 +13,6 @@ var previewURL: String = "N/A"
 class Server: NSObject {
  
     class func postToServer(rawUserInput: String, lat: Double, lon: Double) -> Void {
-        
         let request = NSMutableURLRequest(URL: NSURL(string: "https://jbartolozzi.pythonanywhere.com/")!)
         request.HTTPMethod = "POST"
         let postString = "user_raw_data=\(rawUserInput)&user_lat=\(lat)&user_lon=\(lon)"
@@ -31,6 +30,7 @@ class Server: NSObject {
                 println("Response String: " + (responseString as String))
                 //morganAnsweredNotification
                 NSNotificationCenter.defaultCenter().postNotificationName("morganAnsweredNotification", object: nil)
+                
             }
             
         

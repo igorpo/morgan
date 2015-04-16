@@ -22,7 +22,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     let BOTTOM_CONSTRAINT: CGFloat = 10.0
     var userLoc: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 0, longitude: 0)
     var manager: CLLocationManager = CLLocationManager()
-    var didShowButtonsOnce : Bool = false
     
     @IBOutlet var tableView: UITableView!
     @IBOutlet var messageTextField: UITextField!
@@ -30,7 +29,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     @IBOutlet var txtFieldConstraint: NSLayoutConstraint!
     var messages: [Message] = []
     
-    /*
+   /*
     * Here we add delegates to TableView, and TextField, along with dynamic resizing of cells based on their content.
     * We also set the keyboard observers to capture all events with the keyboard popping up.
     */
@@ -86,7 +85,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         titleRect.addSubview(morganLabel)
         titleRect.addSubview(typingLabel)
         self.navigationItem.titleView = titleRect
-        typingLabel.hidden = true
+        removeMorganIsTyping()
     }
 
     /*
@@ -115,19 +114,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     func morganAnswers () {
         let content = morganResponse
         var message:Message = Message(content: content, isMorgan: true)
-        typingLabel.hidden = true
         messages.append(message)
         updateTableView()
 
         println(content)
         println(count(content))
-
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            if (!self.didShowButtonsOnce) {
-                self.showAnswerButtons()
-                self.didShowButtonsOnce = true
-            }
-
+            self.removeMorganIsTyping()
+        })
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.showAnswerButtons()
         })
 
     }
@@ -289,7 +285,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     * Properly reloads the messages in the conversation to move them accordingly.
     */
     func updateTableView() {
-        removeMorganIsTyping()
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.tableView.reloadData()
 
@@ -475,7 +470,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             button.tag = i
             i++
             initialY += button.frame.size.height + 10
-//            button.addTarget(self, action: "sendMessageFromAutoRepsonseButton:", forControlEvents: .TouchUpInside)
             self.ansView.addSubview(button)
         }
         let button1: UIButton = self.view.viewWithTag(900) as! UIButton
