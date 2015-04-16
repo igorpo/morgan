@@ -1,26 +1,18 @@
 import sys
 import nltk
-import globals
+import globals as g
+import csv
 from random import randint
 
+city_state_filename = "city_state.csv"
+state_abbrev_filename = "state_abbreviation.csv"
+city_state_data = []
+state_abbrev_data = []
 
 # new nlp
-# changes:
-# return_responses["Message"] --field to hold mesage that goes along with the data returned 
-#								from the server, should be default response if all other fields
-#								are None
-# return_responses["Custom"] -- contains the keyword "Ticket", "Preview", or "Next" if the user
-#								selects one of the autoresponses
-#								"Ticket" = Return link to purchase tix
-#								"Preview" = Return .m4a clip of Artist's music
-#								"Next" = Return the next show that might be of interest to user
-# 
 
-
-# autoresponses = ["I'm down! Show me tickets.",
-# 				 "Not sure. Give me more info.",
-# 				 "Fuck you morgan. Show me something else!"]
-
+# friendly messages to randomly include 
+# along with the link to tickets / preview / show suggestion
 customresponses = {	"Tickets": ["Super! You can get tickets here: ",
 								"Good choice. Here you go: ",
 								"Get ready for some tasty jams: ",
@@ -40,109 +32,117 @@ customresponses = {	"Tickets": ["Super! You can get tickets here: ",
 
 #geolocation_phrases = ["nearby", "near me", "shows", "concerts", "tonight"]
 
-
-
 def parse_text(text, return_responses):
-
-	# tokenize sentences, tokenize words, tag words, chunk words using nltk
-	#sentences = nltk.sent_tokenize(text)
-	# add the chunks to a list called chunks
-	#chunks = []
-	#for sent in sentences:
-    #	for chunk in nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(sent))):
-    #		chunks.append(chunk)
-
-	# loop through the chunks and check for keywords
-	#for chunk in chunks:
-		# look for location using keyword "in"
-
-		# look for venu using keyword "at"
-
-
+	# TODO: must handle the case query code 1 (asking for shows in default location)
 
 	# tokenize the string into words
 	text = text.split()
 
 
 	# look for location using keyword "in"
-	if "in" in text:
-		i = text.index("in")
+	if 'in' in text:
+		i = text.index('in')
 		
 		# get the rest of the sentence after keyword into a single string
 		location = text[i + 1, len(text)]
-		" ".join(location)
+		location = " ".join(location)
 
-		# search location string for comma
+		# get the city name from the string (ignore state data)
 		if "," in location:
-			city = location[0 : location.index(",")]
-			state = location[location.index(",") + 1 : len(location)] 
+			city = location[0 : location.index(',')].strip().lower()
+		else:
+			city = location.strip().lower()
 
+		# initialize the csv data
+		# TODO: have server code do this once and store
+		loadCsvData()
 
+		# search for city name in csv data
+		city_exists = False
+		for one_city in city_state_data:
+			# compare our city's name to this city
+			if one_city[0] is city:
+				city_exists = True
+				break
 
-
-
+		if city_exists:
+			# save this location in the data sent to server
+			return_responses[g.CODE] = 2 # user's query = find shows by location
+			return_responses[g.LOCATION] = city 
+			return_responses[g.MESSAGE][g.TICKET] = \
+				customresponses["Tickets"][randit(0, len(customresponses["Tickets"]))]
+			return_responses[g.MESSAGE][g.PREVIEW] = \
+				customresponses["Preview"][randit(0, len(customresponses["Tickets"]))]
+			return_responses[g.MESSAGE][g.SHOW] = \
+				customresponses["Show"][randit(0, len(customresponses["Tickets"]))]		
+		else:
+			# ask the user for a well-formatted query
+			return_responses[g.CODE] = 0 # user's query = not understood
+			return_responses[g.MESSAGE][g.OTHER] = \
+				"I'm sorry! I don't understand what you're asking. \
+				 Is %s a city in the US?" % city
 
 
 	# look for venu using keyword "at"
+	elif 'at' in text:
+		pass
 
-
-	# remove stop words / common words / found locations or venues 
-
-	# search for artist
-
-
-
-
-
-
-	if text == autoresponses[0]:
-		return_responses["Message"] = customresponses["Tickets"][randit(0, len(customresponses["Tickets"]))]
-		return_responses["Custom"] = "Tickets"
-		return return_responses
-	if text == autoresponses[1]:
-		return_responses["Message"] = customresponses["Preview"][randit(0, len(customresponses["Preview"]))]
-		return_responses["Custom"] = "Preview"
-		return return_responses
-	if text == autoresponses[2]:
-		return_responses["Custom"] = "Next"
-		return return_responses
-
-
-	sentences = nltk.sent_tokenize(text)
-	for sent in sentences:
-         for chunk in nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(sent))):
-             if hasattr(chunk, 'label'):
-             	if chunk.label() == 'GSP' or chunk.label() == 'GPE':
-                	return_responses["Location"] = ' '.join(c[0] for c in chunk.leaves())
-                	return return_responses
-
-             	if chunk.label() == 'PERSON':
-             		return_responses["Artist"] = ' '.join(c[0] for c in chunk.leaves())
-             		return return_responses
-
-
-	for phrase in geolocation_phrases:
-		if phrase in text.lower():
-			return_responses["UseGeolocation"] = True
-			return return_responses
-
-
-	return_responses["Message"] = "Sorry, didn't recognize that. Enter a new query!"            	
-	return return_responses
+	# remove stop words and search for artist
+	else:
+		# ask the user for a well-formatted query
+		return_responses[g.CODE] = 0 # user's query = not understood
+		return_responses[g.MESSAGE][g.OTHER] = \
+			"I'm sorry! I don't understand what you're asking."
 
 
 
 def getKeywords(text):
 
-	return_responses = {"Location": None, 
-						"Artist": None, 
-				 		"Venue": None, 
-				 		"Date": None,
-				 		"Custom": None, 
-				 		"UseGeolocation": None,
-				 		"Message": None}
+	return_responses = { g.CODE: None,
+						 g.LOCATION: None, 
+						 g.ARTIST: None, 
+				 		 g.VENUE: None, 
+				 		 g.DATE: None,
+				 		 g.MESSAGE: None, }
 	
 	parse_text(text, return_responses)
 
 	#for p in return_responses:	print p, ",", return_responses[p]
 	return return_responses
+
+def loadCsvData():
+	# open the city state csv file
+	f = open(city_state_filename, 'rt')
+	try:
+		# each row of the reader is a list
+		# [city, state, latitude, longitude]
+		reader = csv.reader(f)
+	except:
+		print("Error opening " + city_state_filename)
+		exit(0)
+
+	# build a list of the city, state, lat, lon lists
+	for row in reader:
+		city_state_data.append([x.lower() for x in row])
+	f.close()
+
+	# open the state abbreviation csv file
+	f = open(state_abbrev_filename, 'rt')
+	try:
+		# each row of the reader is a list
+		# [state, state abbreviation]
+		reader = csv.reader(f)
+	except:
+		print("Error opening " + state_abbrev_filename)
+		exit(0)
+
+	# build a list of the state, state abbreviation lists
+	for row in reader:
+		state_abbrev_data.append([x.lower() for x in row])
+	f.close()
+
+
+
+
+
+	
