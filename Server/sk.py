@@ -40,6 +40,30 @@ def searchForArtistID(artist_name, index=0):
         return """Exception! searchForArtistID """ + str(e)
 
 '''
+Use the songkick api to lookup venue data given a venue id
+'''
+def getVenueDataByID(id):
+    url = SK_URL + "venues/" + str(id) + ".json?apikey=" + SK_APIKEY
+    data = getDataFromURL(url)
+    try:
+        return data["resultsPage"]["results"]["venue"]
+    except Exception as e:
+        return """Exception! searchForArtistID """ + str(e)
+
+'''
+'''
+def searchForEventByVenueName(venue_name,index=0):
+    url = SK_URL + "search/venues.json?query=" + venue_name + "&apikey=" + SK_APIKEY
+    data = getDataFromURL(url)
+    try:
+        venue = data["resultsPage"]["results"]["venue"][0]
+        id = venue["id"]
+        url2 = SK_URL + "venues/" + id + "/calendar.json?apikey=" + SK_ID
+        data2 = getDataFromURL(url2)
+    except:
+        return None
+
+'''
 Get event data from searching by location name.
 '''
 def searchForEventByLocationName(location_name):
@@ -74,41 +98,41 @@ def getPreviewSong(artistName):
         previewURL = itunes_data["results"][0]["previewUrl"]
         return previewURL
     except Exception as e:
-        return """Exception getPreviewSong! """ + str(e)
+        print("""Exception getPreviewSong! """ + str(e))
+        return None
 
 def searchForVenue(venue_name):
     url = SK_URL + "search/venues.json?query="+ venue_name +"&apikey=" + SK_APIKEY
     data = getDataFromURL(url)
 
+def _get(dictionary,key):
+    try:
+        return dictionary[key]
+    except:
+        return None
+
 '''
 Process songkick api retrieval and build dictionary of relevent info.
 '''
-def getEventDataFromSearch(data, index=0):
+def getEventDataFromSearch(data, index):
     try:
+        if index >= len(data["resultsPage"]["results"]["event"]):
+            index = 0
         results = data["resultsPage"]["results"]["event"][index]
         # ARTIST NAME
         artist = results["performance"][0]["artist"]["displayName"]
         # PREVIEW LINK
         preview = getPreviewSong(artist)
         # VENUE NAME
-        venue = results["venue"]["displayName"]
-        # VENUE LOCATION
-        try:
-            venue_lat = results["venue"]["zip"]["lat"]
-            venue_lng = results["venue"]["zip"]["lng"]
-        except:
-            venue_lat = None
-            venue_lng = None
-        # VENUE PHONE
-        try:
-            venue_phone = results["venue"]["phone"]
-        except:
-            venue_phone = None
-        # VENUE WEBSITE
-        try:
-            venue_website = results["venue"]["website"]
-        except:
-            venue_website = None
+        venue_id = results["venue"]["id"]
+        venue_data = getVenueDataByID(venue_id)
+        venue_name = _get(venue_data,"displayName")
+        venue_phone = _get(venue_data,"phone")
+        venue_website = _get(venue_data,"website")
+        venue_lat = _get(venue_data,"lat")
+        venue_lng = _get(venue_data,"lng")
+        tickets = _get(venue_data,"uri")
+
         # DATE AND TIME
         try:
             if results["start"]["datetime"] is not None:
@@ -118,30 +142,48 @@ def getEventDataFromSearch(data, index=0):
         except:
             dateOfEvent = None
 
+        try:
+            ticket_link = None
+        except:
+            ticket_link = None
+
         output = {
             g.ARTIST: artist,
             g.PREVIEW: preview,
-            g.VENUE: venue,
+            g.VENUE: venue_name,
             g.VENUENUM: venue_phone,
             g.VENUEWEB: venue_website,
             g.VENUELAT: venue_lat,
             g.VENUELNG: venue_lng,
             g.DATE: dateOfEvent,
+            g.TICKETS: tickets
         }
-
         return output
 
     except Exception as e:
-        return """Exception! searchForEvent """ + str(e)
+        return """Exception! getEventDataFromSearch """ + str(e)
 
 def test():
-    a = searchForEventByArtistName("Guster")
-    b = getEventDataFromSearch(a)
-    print(b)
+    keywords = {
+        g.CODE:1,
+        g.LOCATION:"Philadelphia",
+        g.LATITUDE:39.9500,
+        g.LONGITUDE:-75.1667,
+        g.ARTIST:"Clap Your Hands Say Yeah",
+        g.VENUE:"Johnny Brendas",
+        g.DATE:"Today",
+        }
+    print(searchByKeywords(keywords,0))
+    print(searchByKeywords(keywords,1))
+    print(searchByKeywords(keywords,2))
+
 
 def searchByKeywords(keywords, index):
+
     code = keywords[g.CODE]
     location = keywords[g.LOCATION]
+    latitude = keywords[g.LATITUDE]
+    longitude = keywords[g.LONGITUDE]
     artist = keywords[g.ARTIST]
     venue = keywords[g.VENUE]
     date = keywords[g.DATE]
@@ -152,26 +194,14 @@ def searchByKeywords(keywords, index):
     # Shows near me query
     elif code == 1:
         data = searchForEventByLocationCoordinates(latitude, longitude)
-        return getEventDataFromSearch(data)
+        return getEventDataFromSearch(data,index)
     # Shows by an artist
     elif code == 2:
         data = searchForEventByArtistName(artist)
-        return getEventDataFromSearch(data)
+        return getEventDataFromSearch(data,index)
     # Shows at a venue
     elif code == 3:
         pass
     else:
         return None
-    '''
-    if use_geo:
-        return searchForEvent(None,lat,lon, index)
-    if custom is not None:
-        return custom
-    elif location is not None:
-        return searchForEvent(location,lat,lon, index)
-    elif artist is not None:
-        return searchForArtist(artist)
-    else:
-        return None
-    '''
 
