@@ -81,7 +81,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         verifyLocationServicesOn()
         
     }
-
+    
+    /*
+     * Show auto response pane in case closed
+     */
+    @IBAction func bringupButtons(sender: AnyObject) {
+        showAnswerButtons()
+    }
+    
     /*
      * Add a title/subtitle for Morgan and "typing..."
      */
