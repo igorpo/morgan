@@ -23,11 +23,11 @@ customresponses = {	"Tickets": ["Super! You can get tickets here: ",
 				  				"For your listening enjoyment, my liege: ",
 				  				"Get a load of these tasty jams: ",
 				  				"Maybe this will win your ear over: "],
-					"Show": ["Here's one I think you might like: ",
-							 "What about this show? ",
-							 "Called my friends and this is the hottest hit in town: ",
-							 "All the cool kids are going here: ",
-							 "Give this one a gander: " ]}
+					"Show":	   ["Here's one I think you might like: ",
+								"What about this show? ",
+								"Called my friends and this is the hottest hit in town: ",
+								"All the cool kids are going here: ",
+								"Give this one a gander: " ]}
 
 
 #geolocation_phrases = ["nearby", "near me", "shows", "concerts", "tonight"]
@@ -44,12 +44,13 @@ def parse_text(text, return_responses):
 		i = text.index('in')
 		
 		# get the rest of the sentence after keyword into a single string
-		location = text[i + 1, len(text)]
+		location = text[i + 1: len(text)]
 		location = " ".join(location)
 
 		# get the city name from the string (ignore state data)
 		if "," in location:
-			city = location[0 : location.index(',')].strip().lower()
+			city = location[0 : location.index(',')]
+			city = city.strip().lower()
 		else:
 			city = location.strip().lower()
 
@@ -61,7 +62,7 @@ def parse_text(text, return_responses):
 		city_exists = False
 		for one_city in city_state_data:
 			# compare our city's name to this city
-			if one_city[0] is city:
+			if city == one_city[0].strip().lower():
 				city_exists = True
 				break
 
@@ -70,20 +71,19 @@ def parse_text(text, return_responses):
 			return_responses[g.CODE] = 2 # user's query = find shows by location
 			return_responses[g.LOCATION] = city 
 			return_responses[g.MESSAGE][g.TICKET] = \
-				customresponses["Tickets"][randit(0, len(customresponses["Tickets"]))]
+				customresponses["Tickets"][randint(0, len(customresponses["Tickets"]))]
 			return_responses[g.MESSAGE][g.PREVIEW] = \
-				customresponses["Preview"][randit(0, len(customresponses["Tickets"]))]
+				customresponses["Preview"][randint(0, len(customresponses["Preview"]))]
 			return_responses[g.MESSAGE][g.SHOW] = \
-				customresponses["Show"][randit(0, len(customresponses["Tickets"]))]		
+				customresponses["Show"][randint(0, len(customresponses["Show"]))]		
 		else:
 			# ask the user for a well-formatted query
 			return_responses[g.CODE] = 0 # user's query = not understood
 			return_responses[g.MESSAGE][g.OTHER] = \
-				"I'm sorry! I don't understand what you're asking. \
-				 Is %s a city in the US?" % city
+				"I'm sorry! I don't understand what you're asking. Is %s a city in the US?" % city
 
 
-	# look for venu using keyword "at"
+	# look for venue using keyword "at"
 	elif 'at' in text:
 		pass
 
@@ -103,12 +103,18 @@ def getKeywords(text):
 						 g.ARTIST: None, 
 				 		 g.VENUE: None, 
 				 		 g.DATE: None,
-				 		 g.MESSAGE: None, }
+				 		 g.MESSAGE: {g.TICKET: None,
+				 		 			 g.PREVIEW: None,
+				 		 			 g.SHOW: None,
+				 		 			 g.OTHER: None} }
 	
 	parse_text(text, return_responses)
 
 	#for p in return_responses:	print p, ",", return_responses[p]
 	return return_responses
+
+
+
 
 def loadCsvData():
 	# open the city state csv file
