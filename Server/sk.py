@@ -178,12 +178,9 @@ def test():
     print(searchByKeywords(keywords,2))
 
 
-def searchByKeywords(keywords, index):
-
+def searchByKeywords(keywords, latitude, longitude, index):
     code = keywords[g.CODE]
     location = keywords[g.LOCATION]
-    latitude = keywords[g.LATITUDE]
-    longitude = keywords[g.LONGITUDE]
     artist = keywords[g.ARTIST]
     venue = keywords[g.VENUE]
     date = keywords[g.DATE]
@@ -195,12 +192,16 @@ def searchByKeywords(keywords, index):
     elif code == 1:
         data = searchForEventByLocationCoordinates(latitude, longitude)
         return getEventDataFromSearch(data,index)
-    # Shows by an artist
+    # Show at location
     elif code == 2:
+        data = searchForEventByLocationName(location)
+        return getEventDataFromSearch(data,index)
+    # Shows by an artist
+    elif code == 3:
         data = searchForEventByArtistName(artist)
         return getEventDataFromSearch(data,index)
     # Shows at a venue
-    elif code == 3:
+    elif code == 4:
         pass
     else:
         return None
