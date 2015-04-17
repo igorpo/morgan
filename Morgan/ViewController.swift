@@ -11,12 +11,22 @@ import AVFoundation
 import CoreLocation
 import Foundation
 
+/*
+    James needs to use the Flask funtionality called "jsonify":
+    cmd + f "jsonify" here (2nd result) http://flask.pocoo.org/docs/0.10/api/
+    that will ensure we get a valid JSON response and it's supposed to work out-of-the-box
+    with what we have built.
+    ***IMPORTANT*** make sure he gives the tickets purchase link as "buyLink" attribute in the JSON
+    other than that 
+    we're chilling
+*/
+
 var KEYBOARD_HEIGHT: CGFloat = 0
 class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate, CLLocationManagerDelegate {
     
     var currentSongUrl = ""
     
-    var buyLink : String = "http://www.ticketmaster.com/?id=234234234"
+    var buyLink : String = ""
     
     var player = AVPlayer()
     var typingLabel : UILabel = UILabel()
@@ -115,11 +125,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
      * Morgan's response (random for now)
      */
     func morganAnswers () {
-        var content = ""
+        var content: String = ""
         var error: NSError?
-        var date : String = ""
-        var artist : String = ""
-        var venue : String = ""
+        var date: String = ""
+        var artist: String = ""
+        var venue: String = ""
         
 //        let jsonData: NSData = morganResponse.stringByReplacingOccurrencesOfString("'", withString: "\"", options: .LiteralSearch, range: nil).dataUsingEncoding(NSUTF8StringEncoding)!
         let jsonData: NSData = "{\"artist\": \"Bobby\", \"date\":\"7\", \"venue\":\"La Factoria\", \"preview\":\"http://a1148.phobos.apple.com/us/r1000/044/Music4/v4/a6/b5/cd/a6b5cd6b-3e55-3130-efa1-b8bd309eeca8/mzaf_7972923366726760857.plus.aac.p.m4a\"}".dataUsingEncoding(NSUTF8StringEncoding)!
@@ -135,7 +145,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                 artist = jsonResult["artist"] as! String
                 venue = jsonResult["venue"] as! String
                 previewURL = jsonResult["preview"] as! String
-//                buyLink = jsonResult["ticketLink"] as! String
+                buyLink = jsonResult["ticketLink"] != nil ? jsonResult["ticketLink"] as! String : "http://www.ticketmaster.com/?id=234234234"
                 content = "\(artist) is playing at \(venue) on \(date). Tap one of the following buttons for more info, or simply type a new question"
                 println(content)
                 var message:Message = Message(content: content, isMorgan: true)

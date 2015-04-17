@@ -12,6 +12,9 @@ var previewURL: String = "N/A"
 
 class Server: NSObject {
  
+    /*
+     * Hit up the server for a JSON response
+     */
     class func postToServer(rawUserInput: String, lat: Double, lon: Double) -> Void {
         let request = NSMutableURLRequest(URL: NSURL(string: "https://jbartolozzi.pythonanywhere.com/")!)
         request.HTTPMethod = "POST"
@@ -37,6 +40,9 @@ class Server: NSObject {
         })
     }
     
+    /*
+     * Sprint: Test to make sure that preview song plays
+     */
     class func getPreviewSong(artist_name: String) -> Void {
         var new_name = artist_name.stringByReplacingOccurrencesOfString(" ", withString: "+", options: NSStringCompareOptions.LiteralSearch, range: nil)
         let request = NSMutableURLRequest(URL: NSURL(string: "https://jbartolozzi.pythonanywhere.com/\(new_name)/preview")!)
