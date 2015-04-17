@@ -4,6 +4,7 @@ from flask import Flask, request, url_for, make_response, current_app, jsonify
 import sk
 import nlp
 import json
+import globals as g
 
 try:
     unicode = unicode
@@ -78,9 +79,18 @@ def queryMorgan():
         data = str(request.form["user_raw_data"])
         lat = float(request.form["user_lat"])
         lon = float(request.form["user_lon"])
-        index = int(request.form["user_index"])
+        index = int(request.form["index"])
 
-        keywords = nlp.getKeywords(data)
+        keywords = {
+            g.CODE:1,
+            g.LOCATION:"Philadelphia",
+            g.LATITUDE:lat,
+            g.LONGITUDE:lon,
+            g.ARTIST:"Clap Your Hands Say Yeah",
+            g.VENUE:"Johnny Brendas",
+            g.DATE:"Today"}
+
+        #keywords = nlp.getKeywords(data)
 
         return_json = sk.searchByKeywords(keywords,index)
         # return """Keywords """ + str(keywords) + """ lat: """ + str(lat) + """ lon: """ + str(lon)
