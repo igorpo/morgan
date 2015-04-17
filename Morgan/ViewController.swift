@@ -9,11 +9,14 @@
 import UIKit
 import AVFoundation
 import CoreLocation
+import Foundation
 
 var KEYBOARD_HEIGHT: CGFloat = 0
 class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate, CLLocationManagerDelegate {
     
     var currentSongUrl = ""
+    
+    var buyLink : String = "http://www.ticketmaster.com/?id=234234234"
     
     var player = AVPlayer()
     var typingLabel : UILabel = UILabel()
@@ -96,7 +99,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             var message:Message = Message(content: messageTextField.text, isMorgan: false)
             messages.append(message)
             updateTableView()
-            Server.getPreviewSong(message.content)
+//            Server.getPreviewSong(message.content)
             showMorganIsTyping()
             
             /*
@@ -112,13 +115,38 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
      * Morgan's response (random for now)
      */
     func morganAnswers () {
-        let content = morganResponse
-        var message:Message = Message(content: content, isMorgan: true)
-        messages.append(message)
-        updateTableView()
-
-        println(content)
-        println(count(content))
+        var content = ""
+        var error: NSError?
+        var date : String = ""
+        var artist : String = ""
+        var venue : String = ""
+        
+//        let jsonData: NSData = morganResponse.stringByReplacingOccurrencesOfString("'", withString: "\"", options: .LiteralSearch, range: nil).dataUsingEncoding(NSUTF8StringEncoding)!
+        let jsonData: NSData = "{\"artist\": \"Bobby\", \"date\":\"7\", \"venue\":\"La Factoria\", \"preview\":\"http://a1148.phobos.apple.com/us/r1000/044/Music4/v4/a6/b5/cd/a6b5cd6b-3e55-3130-efa1-b8bd309eeca8/mzaf_7972923366726760857.plus.aac.p.m4a\"}".dataUsingEncoding(NSUTF8StringEncoding)!
+        
+        var err: NSError?
+        if let jsonResult = NSJSONSerialization.JSONObjectWithData(jsonData, options: NSJSONReadingOptions.MutableContainers, error: &err) as? NSDictionary {
+            if(err != nil) {
+                // If there is an error parsing JSON, print it to the console
+                println("JSON Error \(err!.localizedDescription)")
+                
+            } else {
+                date = jsonResult["date"] as! String
+                artist = jsonResult["artist"] as! String
+                venue = jsonResult["venue"] as! String
+                previewURL = jsonResult["preview"] as! String
+//                buyLink = jsonResult["ticketLink"] as! String
+                content = "\(artist) is playing at \(venue) on \(date). Tap one of the following buttons for more info, or simply type a new question"
+                println(content)
+                var message:Message = Message(content: content, isMorgan: true)
+                messages.append(message)
+                updateTableView()
+            }
+            
+        } else {
+            println("json results didnt work")
+        }
+        
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.removeMorganIsTyping()
         })
@@ -504,20 +532,43 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     
     
     func showTicketsLink() {
+        let button = UIBarButtonItem(barButtonSystemItem:UIBarButtonSystemItem.Action, target: self, action: "openPurchaseUrl")
+        self.navigationController?.navigationBar.topItem?.rightBarButtonItem = button
+        
+
+        sendMorganMessageFromAutoRepsonseButton("Tap the action button on the top right to purchase tickets!")
         
     }
     
+    func openPurchaseUrl() {
+        let optionMenu = UIAlertController(title: nil, message: "Choose Option", preferredStyle: .ActionSheet)
+        
+        let buyAction = UIAlertAction(title: "Open in Safari", style: .Default, handler: {
+            (alert: UIAlertAction!) -> Void in
+            UIApplication.sharedApplication().openURL(NSURL(string: self.buyLink)!)
+            
+        })
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: {
+            (alert: UIAlertAction!) -> Void in
+            println("Cancelled")
+        })
+        
+        
+        optionMenu.addAction(buyAction)
+        optionMenu.addAction(cancelAction)
+        
+        self.presentViewController(optionMenu, animated: true, completion: nil)
+    }
     
     func showPreviewSong() {
         makePlayActive()
         sendMorganMessageFromAutoRepsonseButton("Here! Tap the play button in the top right corner to hear some tunes by this artist")
     }
     
-    
     func showNextResult() {
         
     }
-    
     
     func showMorganIsTyping() {
         typingLabel.hidden = false
