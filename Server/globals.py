@@ -4,11 +4,13 @@
 # CODE = (Integer) type of query received
 #	0  = unrecognized query
 #	1  = shows near me query
-#	2  = shows by an artist
-#	3  = shows at a venue
+#   2  = shows by non-default location
+#	3  = shows by an artist
+#	4  = shows at a venue
 CODE = "code"
 
-# LOCATION = (String) zip code of the location of interest, geolocation of device by default
+# LOCATION = (String) city name of the location of interest, 
+#            geolocation of device by default (if LOCATION field is nil)
 LOCATION = "location"
 LATITUDE = "latitude"
 LONGITUDE = "longitude"
@@ -36,10 +38,13 @@ DATE = "date"
 #	Values = (String) personalized message
 #	Example = { SHOW: "This show looks like an awesome time: "
 #				TICKET: "Super! You can get tickets here: ",
-#				PREVIEW: "Take a listen: " }
+#				PREVIEW: "Take a listen: "
+#				OTHER: "I'm sorry, I don't understand what you're asking"}
 MESSAGE = "message"
 # Dictionary Keys
 TICKET = "ticket"
 PREVIEW = "preview"
+SHOW = "show"
+OTHER = "other"
 
 

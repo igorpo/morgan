@@ -9,20 +9,32 @@
 import UIKit
 import AVFoundation
 import CoreLocation
+import Foundation
+
+/*
+    James needs to use the Flask funtionality called "jsonify":
+    cmd + f "jsonify" here (2nd result) http://flask.pocoo.org/docs/0.10/api/
+    that will ensure we get a valid JSON response and it's supposed to work out-of-the-box
+    with what we have built.
+    ***IMPORTANT*** make sure he gives the tickets purchase link as "buyLink" attribute in the JSON
+    other than that 
+    we're chilling
+*/
 
 var KEYBOARD_HEIGHT: CGFloat = 0
 class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate, CLLocationManagerDelegate {
-    @IBOutlet var playButtonOutlet: UIBarButtonItem!
     
     var currentSongUrl = ""
     
+    var buyLink : String = ""
+    
     var player = AVPlayer()
+    var typingLabel : UILabel = UILabel()
     
     var ansView : UIView = UIView()
     let BOTTOM_CONSTRAINT: CGFloat = 10.0
     var userLoc: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 0, longitude: 0)
     var manager: CLLocationManager = CLLocationManager()
-    var didShowButtonsOnce : Bool = false
     
     @IBOutlet var tableView: UITableView!
     @IBOutlet var messageTextField: UITextField!
@@ -30,6 +42,65 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     @IBOutlet var txtFieldConstraint: NSLayoutConstraint!
     var messages: [Message] = []
     
+   /*
+    * Here we add delegates to TableView, and TextField, along with dynamic resizing of cells based on their content.
+    * We also set the keyboard observers to capture all events with the keyboard popping up.
+    */
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        createMorganTitleAndSubtitle()
+        self.tableView.delegate = self
+        messageTextField.delegate = self
+        
+        setUpLocation()
+        let content1 = "Hello! I'm Morgan! Tell me things like: 'show me concerts in New York' or 'concerts near me' "
+        let welcomeMsg: Message = Message(content: content1, isMorgan: true)
+        messages.append(welcomeMsg)
+        
+        tableView.allowsSelection = false
+        tableView.estimatedRowHeight = 50
+        tableView.rowHeight = UITableViewAutomaticDimension
+        
+        self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "morganAnswers", name:"morganAnsweredNotification", object: nil)
+        //        NSNotificationCenter.defaultCenter().addObserver(self, selector: "makePlayActive", name:"previewURLNotification", object: nil)
+        txtFieldConstraint.constant = BOTTOM_CONSTRAINT
+        sendConstraint.constant = BOTTOM_CONSTRAINT
+    }
+    
+    /*
+     * Apple's view call
+     */
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        verifyLocationServicesOn()
+        
+    }
+
+    /*
+     * Add a title/subtitle for Morgan and "typing..."
+     */
+    func createMorganTitleAndSubtitle() {
+        var titleRect : UIView = UIView(frame: CGRectMake(0, 0, 120, 36))
+        var morganLabel : UILabel = UILabel(frame: CGRectMake(0, 0, 120, 30))
+        morganLabel.font = UIFont(name: "HelveticaNeue-Medium", size: 19.0)
+        morganLabel.text = "Morgan"
+        morganLabel.textAlignment = .Center
+        
+        typingLabel = UILabel(frame: CGRectMake(0, 22, 120, 20))
+        typingLabel.text = "Morgan is typing..."
+        typingLabel.font = UIFont(name: "HelveticaNeue", size: 9.0)
+        typingLabel.textAlignment = .Center
+
+        titleRect.addSubview(morganLabel)
+        titleRect.addSubview(typingLabel)
+        self.navigationItem.titleView = titleRect
+        removeMorganIsTyping()
+    }
+
     /*
      * Sends a message from the user
      */
@@ -38,7 +109,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             var message:Message = Message(content: messageTextField.text, isMorgan: false)
             messages.append(message)
             updateTableView()
-            Server.getPreviewSong(message.content)
+//            Server.getPreviewSong(message.content)
+            showMorganIsTyping()
+            
             /*
             we need to keep the name of the artist as retrieved by the nlp locally
             then when the user wants a preview, we need to call this method:             Server.getPreviewSong(<artist's name goes here>)
@@ -52,71 +125,91 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
      * Morgan's response (random for now)
      */
     func morganAnswers () {
-        let content = morganResponse
-        var message:Message = Message(content: content, isMorgan: true)
-        messages.append(message)
-        updateTableView()
-
-        println(content)
-        println(countElements(content))
-
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            if (!self.didShowButtonsOnce) {
-                self.showAnswerButtons()
-                self.didShowButtonsOnce = true
+        var content: String = ""
+        var error: NSError?
+        var date: String = ""
+        var artist: String = ""
+        var venue: String = ""
+        
+//        let jsonData: NSData = morganResponse.stringByReplacingOccurrencesOfString("'", withString: "\"", options: .LiteralSearch, range: nil).dataUsingEncoding(NSUTF8StringEncoding)!
+        let jsonData: NSData = "{\"artist\": \"Bobby\", \"date\":\"7\", \"venue\":\"La Factoria\", \"preview\":\"http://a1148.phobos.apple.com/us/r1000/044/Music4/v4/a6/b5/cd/a6b5cd6b-3e55-3130-efa1-b8bd309eeca8/mzaf_7972923366726760857.plus.aac.p.m4a\"}".dataUsingEncoding(NSUTF8StringEncoding)!
+        
+        var err: NSError?
+        if let jsonResult = NSJSONSerialization.JSONObjectWithData(jsonData, options: NSJSONReadingOptions.MutableContainers, error: &err) as? NSDictionary {
+            if(err != nil) {
+                // If there is an error parsing JSON, print it to the console
+                println("JSON Error \(err!.localizedDescription)")
+                
+            } else {
+                date = jsonResult["date"] as! String
+                artist = jsonResult["artist"] as! String
+                venue = jsonResult["venue"] as! String
+                previewURL = jsonResult["preview"] as! String
+                buyLink = jsonResult["ticketLink"] != nil ? jsonResult["ticketLink"] as! String : "http://www.ticketmaster.com/?id=234234234"
+                content = "\(artist) is playing at \(venue) on \(date). Tap one of the following buttons for more info, or simply type a new question"
+                println(content)
+                var message:Message = Message(content: content, isMorgan: true)
+                messages.append(message)
+                updateTableView()
             }
-
+            
+        } else {
+            println("json results didnt work")
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.removeMorganIsTyping()
+        })
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.showAnswerButtons()
         })
 
     }
     
-    func makePlayActive() {
-        playButtonOutlet.enabled = true
-    }
-    
-    @IBAction func tapPlay(sender: AnyObject) {
-        currentSongUrl = previewURL
-        let pItem = AVPlayerItem(URL: NSURL(string: currentSongUrl))
-        player = AVPlayer(playerItem: pItem)
-        player.rate = 1.0;
-        player.play()
-        sender.set
+    /*
+     * remove play button when user starts querying again
+     */
+    func removeBarButton() {
+        self.navigationController?.navigationBar.topItem?.rightBarButtonItem = nil
+        player.pause()
     }
     
     /*
-     * Here we add delegates to TableView, and TextField, along with dynamic resizing of cells based on their content.
-     * We also set the keyboard observers to capture all events with the keyboard popping up. 
+     * Fires from a response
      */
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        self.tableView.delegate = self
-        messageTextField.delegate = self
-        
-        setUpLocation()
-        
-
-        
-        let content1 = "Hello! I'm Morgan! Tell me things like: 'show me concerts in New York' or 'concerts near me' "
-        let welcomeMsg: Message = Message(content: content1, isMorgan: true)
-        messages.append(welcomeMsg)
-        
-        tableView.allowsSelection = false
-        tableView.estimatedRowHeight = 50
-        tableView.rowHeight = UITableViewAutomaticDimension
-
-        self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None
-        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "morganAnswers", name:"morganAnsweredNotification", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "makePlayActive", name:"previewURLNotification", object: nil)
-//        previewURLNotification
-
-
-        txtFieldConstraint.constant = BOTTOM_CONSTRAINT
-        sendConstraint.constant = BOTTOM_CONSTRAINT
+    func makePlayActive() {
+        let button = UIBarButtonItem(barButtonSystemItem:UIBarButtonSystemItem.Play, target: self, action: "tapPlay:")
+        self.navigationController?.navigationBar.topItem?.rightBarButtonItem = button
     }
+    
+    /*
+     * Play itunes preview
+     */
+    func tapPlay(sender: AnyObject) {
+        currentSongUrl = previewURL
+        
+        // if player exists, resume instead of play
+        
+        let pItem = AVPlayerItem(URL: NSURL(string: currentSongUrl))
+        player = AVPlayer(playerItem: pItem)
+        player.rate = 1.0
+        
+        player.play()
+
+        //change to pause
+        let button = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Pause, target: self, action: "pauseMusic")
+        self.navigationController?.navigationBar.topItem?.rightBarButtonItem? = button
+    }
+    
+    /*
+     * Pause player
+     */
+    func pauseMusic() {
+        player.pause()
+        let button = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Play, target: self, action: "tapPlay:")
+        self.navigationController?.navigationBar.topItem?.rightBarButtonItem? = button
+    }
+    
     
    /*
     * Apple's standard
@@ -155,11 +248,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             cellIdentifier = "userMessageCell"
         }
 
-        var cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as UITableViewCell
+        var cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as! UITableViewCell
         
         // prevent appending layers on layers
         cell.contentView.viewWithTag(500)?.removeFromSuperview()
-        var theLabel : UILabel = cell.viewWithTag(1) as UILabel
+        var theLabel : UILabel = cell.viewWithTag(1) as! UILabel
         theLabel.font = theLabel.font.fontWithSize(17)
         
         if cellIdentifier == "morganCell" {
@@ -171,7 +264,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             theLabel.text = messages[indexPath.row].content
             
             theLabel.sizeToFit()
-            let numCharsInLabel: CGFloat = CGFloat(countElements(theLabel.text!))
+            let numCharsInLabel: CGFloat = CGFloat(count(theLabel.text!))
             let size = NSString(string: theLabel.text!).sizeWithAttributes([NSFontAttributeName: theLabel.font])
             let setTxtWidth = (numCharsInLabel < 30) ? size.width : size.width / (numCharsInLabel / 26.0)
             let rect = CGRectMake(theLabel.frame.origin.x, theLabel.frame.origin.y, setTxtWidth, theLabel.frame.height)
@@ -195,9 +288,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             theLabel.lineBreakMode = .ByWordWrapping
             theLabel.numberOfLines = 0
             theLabel.text = messages[indexPath.row].content
-            
+            theLabel.textAlignment = .Left
             theLabel.sizeToFit()
-            let numCharsInLabel = CGFloat(countElements(theLabel.text!))
+            let numCharsInLabel = CGFloat(count(theLabel.text!))
             if (numCharsInLabel < 26) {
                 theLabel.textAlignment = .Right
             }
@@ -207,7 +300,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             let setTxtWidth = (numCharsInLabel < 30) ? size.width : size.width / (numCharsInLabel / 26.0)
             
             let widthOfScreen = UIScreen.mainScreen().applicationFrame.width
-            let xCoord = widthOfScreen - setTxtWidth - 14
+            let xCoord = widthOfScreen - setTxtWidth - 20
             
             let rect = CGRectMake(xCoord, theLabel.frame.origin.y, setTxtWidth, theLabel.frame.height)
 
@@ -230,9 +323,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     * Properly reloads the messages in the conversation to move them accordingly.
     */
     func updateTableView() {
-
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.tableView.reloadData()
+
             self.tableView.layoutIfNeeded()
             if self.tableView.contentSize.height > self.tableView.frame.size.height {
                 self.tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: self.messages.count - 1, inSection: 0), atScrollPosition: UITableViewScrollPosition.Bottom, animated: true)
@@ -287,6 +380,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                 })
             }
         }
+        removeBarButton()
+        
     }
     
 
@@ -303,10 +398,42 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     }
     
     /*
+    * verifies location services authorization status and shows appropriate message
+    */
+    func verifyLocationServicesOn() {
+        switch CLLocationManager.authorizationStatus() {
+        case /*.Authorized,*/ .AuthorizedWhenInUse:
+            println("location is authorized we're chilling")
+            return
+        case .NotDetermined:
+            manager.requestAlwaysAuthorization()
+            break;
+        case .Restricted, .Denied:
+            let alertController = UIAlertController(
+                title: "Location Access Disabled",
+                message: "To let Morgan do her magic, please open this app's settings and set location access to 'While Using the App'.",
+                preferredStyle: .Alert)
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+            alertController.addAction(cancelAction)
+            
+            let openAction = UIAlertAction(title: "Open Settings", style: .Default) { (action) in
+                if let url = NSURL(string:UIApplicationOpenSettingsURLString) {
+                    UIApplication.sharedApplication().openURL(url)
+                }
+            }
+            alertController.addAction(openAction)
+            
+            self.presentViewController(alertController, animated: true, completion: nil)
+        default:
+            break;
+        }
+    }
+    /*
      * Update location
      */
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
-        var userLocation = locations[0] as CLLocation
+        var userLocation = locations[0] as!CLLocation
         
         let lat = userLocation.coordinate.latitude
         let lon = userLocation.coordinate.longitude
@@ -337,13 +464,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         
         
         generateAutoResponseButtons(["I'm down! Show me tickets.", "Not sure. Give me more info.", "Fuck you morgan. Show me something else!"])
+        
         generateRemoveSubviewButton()
     }
+    
+    
     
     // MARK: auto response code
     
     func generateRemoveSubviewButton() {
-        let delete = UIButton.buttonWithType(UIButtonType.Custom) as UIButton
+        let delete = UIButton.buttonWithType(UIButtonType.Custom) as! UIButton
         delete.frame = CGRectMake(15, 10, 25, 25)
         delete.setTitle("X", forState: UIControlState.Normal)
         delete.layer.cornerRadius = 0.5 * delete.bounds.size.width
@@ -362,8 +492,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
      */
     func generateAutoResponseButtons(options : [String]) {
         var initialY : CGFloat = 40
+        var i : Int = 900
         for option in options {
-            let button = UIButton.buttonWithType(UIButtonType.System) as UIButton
+            let button = UIButton.buttonWithType(UIButtonType.System) as! UIButton
             button.setTitle(option, forState: UIControlState.Normal)
             button.frame = CGRectMake(15, initialY, UIScreen.mainScreen().applicationFrame.width - 30, 50)
             button.titleLabel?.font = UIFont(name: "HelveticaNeue", size: 16)
@@ -374,21 +505,29 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             button.layer.borderColor = UIColor.blackColor().CGColor
             button.layer.borderWidth = 2
             button.layer.cornerRadius = 5
+            button.tag = i
+            i++
             initialY += button.frame.size.height + 10
-            button.addTarget(self, action: "sendMessageFromAutoRepsonseButton:", forControlEvents: .TouchUpInside)
             self.ansView.addSubview(button)
         }
+        let button1: UIButton = self.view.viewWithTag(900) as! UIButton
+        let button2: UIButton = self.view.viewWithTag(901) as! UIButton
+        let button3: UIButton = self.view.viewWithTag(902) as! UIButton
+        button1.addTarget(self, action: "showTicketsLink", forControlEvents: .TouchUpInside)
+        button2.addTarget(self, action: "showPreviewSong", forControlEvents: .TouchUpInside)
+        button3.addTarget(self, action: "showNextResult", forControlEvents: .TouchUpInside)
+        
     }
     
     /* 
      * Recreates a message from the auto button selection
      */
-    func sendMessageFromAutoRepsonseButton(sender : UIButton) {
-        let messageText = sender.titleLabel?.text
-        var message:Message = Message(content: messageText!, isMorgan: false)
+    func sendMorganMessageFromAutoRepsonseButton(message : String) {
+        let messageText = message
+        var message:Message = Message(content: messageText, isMorgan: true)
         messages.append(message)
         updateTableView()
-        Server.postToServer(message.content, lat: Double(userLoc.latitude), lon: Double(userLoc.longitude))
+//        Server.postToServer(message.content, lat: Double(userLoc.latitude), lon: Double(userLoc.longitude))
         dismissAutoResponsePane()
     }
     
@@ -399,7 +538,53 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         let transition = UIViewAnimationOptions.TransitionCrossDissolve
         UIView.transitionWithView(self.view, duration: 0.8, options: transition, animations: {
             self.ansView.removeFromSuperview()}, completion: nil)
+    }
+    
+    
+    func showTicketsLink() {
+        let button = UIBarButtonItem(barButtonSystemItem:UIBarButtonSystemItem.Action, target: self, action: "openPurchaseUrl")
+        self.navigationController?.navigationBar.topItem?.rightBarButtonItem = button
+        
+
+        sendMorganMessageFromAutoRepsonseButton("Tap the action button on the top right to purchase tickets!")
+        
+    }
+    
+    func openPurchaseUrl() {
+        let optionMenu = UIAlertController(title: nil, message: "Choose Option", preferredStyle: .ActionSheet)
+        
+        let buyAction = UIAlertAction(title: "Open in Safari", style: .Default, handler: {
+            (alert: UIAlertAction!) -> Void in
+            UIApplication.sharedApplication().openURL(NSURL(string: self.buyLink)!)
+            
+        })
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: {
+            (alert: UIAlertAction!) -> Void in
+            println("Cancelled")
+        })
         
         
+        optionMenu.addAction(buyAction)
+        optionMenu.addAction(cancelAction)
+        
+        self.presentViewController(optionMenu, animated: true, completion: nil)
+    }
+    
+    func showPreviewSong() {
+        makePlayActive()
+        sendMorganMessageFromAutoRepsonseButton("Here! Tap the play button in the top right corner to hear some tunes by this artist")
+    }
+    
+    func showNextResult() {
+        
+    }
+    
+    func showMorganIsTyping() {
+        typingLabel.hidden = false
+    }
+    
+    func removeMorganIsTyping() {
+        typingLabel.hidden = true
     }
 }
