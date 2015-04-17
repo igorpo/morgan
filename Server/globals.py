@@ -42,9 +42,9 @@ DATE = "date"
 #				OTHER: "I'm sorry, I don't understand what you're asking"}
 MESSAGE = "message"
 # Dictionary Keys
-TICKET = "ticket"
-PREVIEW = "preview"
-SHOW = "show"
-OTHER = "other"
+M_TICKET = "ticket"
+M_PREVIEW = "preview"
+M_SHOW = "show"
+M_OTHER = "other"
 
 

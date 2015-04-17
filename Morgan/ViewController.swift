@@ -19,6 +19,7 @@ import Foundation
     ***IMPORTANT*** make sure he gives the tickets purchase link as "buyLink" attribute in the JSON
     other than that 
     we're chilling
+    DONT FORGET TO CHECK FOR NULLPOINTER  EXCEPTION FOR THE INDEX !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 */
 
 var KEYBOARD_HEIGHT: CGFloat = 0
@@ -30,7 +31,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     
     var player = AVPlayer()
     var typingLabel : UILabel = UILabel()
-    
+    var latestQuery : String = ""
+    var gIndex : Int = 0
     var ansView : UIView = UIView()
     let BOTTOM_CONSTRAINT: CGFloat = 10.0
     var userLoc: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 0, longitude: 0)
@@ -79,7 +81,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         verifyLocationServicesOn()
         
     }
-
+    
+    /*
+     * Show auto response pane in case closed
+     */
+    @IBAction func bringupButtons(sender: AnyObject) {
+        showAnswerButtons()
+    }
+    
     /*
      * Add a title/subtitle for Morgan and "typing..."
      */
@@ -109,14 +118,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             var message:Message = Message(content: messageTextField.text, isMorgan: false)
             messages.append(message)
             updateTableView()
-//            Server.getPreviewSong(message.content)
             showMorganIsTyping()
             
-            /*
-            we need to keep the name of the artist as retrieved by the nlp locally
-            then when the user wants a preview, we need to call this method:             Server.getPreviewSong(<artist's name goes here>)
-            */
-            Server.postToServer(message.content, lat: Double(userLoc.latitude), lon: Double(userLoc.longitude))
+            Server.postToServer(message.content, lat: Double(userLoc.latitude), lon: Double(userLoc.longitude), index: 0)
+            latestQuery = message.content
         }
         messageTextField.text = ""
     }
@@ -132,7 +137,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         var venue: String = ""
         
 //        let jsonData: NSData = morganResponse.stringByReplacingOccurrencesOfString("'", withString: "\"", options: .LiteralSearch, range: nil).dataUsingEncoding(NSUTF8StringEncoding)!
-        let jsonData: NSData = "{\"artist\": \"Bobby\", \"date\":\"7\", \"venue\":\"La Factoria\", \"preview\":\"http://a1148.phobos.apple.com/us/r1000/044/Music4/v4/a6/b5/cd/a6b5cd6b-3e55-3130-efa1-b8bd309eeca8/mzaf_7972923366726760857.plus.aac.p.m4a\"}".dataUsingEncoding(NSUTF8StringEncoding)!
+        let jsonData: NSData = morganResponse.dataUsingEncoding(NSUTF8StringEncoding)!
+//        let jsonData: NSData = "{\"artist\": \"Bobby\", \"date\":\"7\", \"venue\":\"La Factoria\", \"preview\":\"http://a1148.phobos.apple.com/us/r1000/044/Music4/v4/a6/b5/cd/a6b5cd6b-3e55-3130-efa1-b8bd309eeca8/mzaf_7972923366726760857.plus.aac.p.m4a\"}".dataUsingEncoding(NSUTF8StringEncoding)!
         
         var err: NSError?
         if let jsonResult = NSJSONSerialization.JSONObjectWithData(jsonData, options: NSJSONReadingOptions.MutableContainers, error: &err) as? NSDictionary {
@@ -540,7 +546,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             self.ansView.removeFromSuperview()}, completion: nil)
     }
     
-    
+    /*
+     * Bring up tix link
+     */
     func showTicketsLink() {
         let button = UIBarButtonItem(barButtonSystemItem:UIBarButtonSystemItem.Action, target: self, action: "openPurchaseUrl")
         self.navigationController?.navigationBar.topItem?.rightBarButtonItem = button
@@ -577,7 +585,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     }
     
     func showNextResult() {
-        
+        gIndex++
+        Server.postToServer(latestQuery, lat: Double(userLoc.latitude), lon: Double(userLoc.longitude), index:gIndex)
+        sendMorganMessageFromAutoRepsonseButton("np, coming up")
     }
     
     func showMorganIsTyping() {
