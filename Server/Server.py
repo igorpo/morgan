@@ -82,7 +82,7 @@ def queryMorgan():
         index = int(request.form["index"])
 
         test_keywords = {
-            g.CODE:1,
+            g.CODE:2,
             g.LOCATION:"Philadelphia",
             g.LATITUDE:lat,
             g.LONGITUDE:lon,
@@ -92,7 +92,7 @@ def queryMorgan():
 
         keywords = nlp.getKeywords(data)
 
-        return_json = sk.searchByKeywords(keywords,lat, lon, index)
+        return_json = sk.searchByKeywords(keywords, lat, lon, index)
         # return """Keywords """ + str(keywords) + """ lat: """ + str(lat) + """ lon: """ + str(lon)
         return json.dumps(return_json)
 

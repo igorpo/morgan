@@ -1,4 +1,5 @@
 import requests
+import nlp
 import globals as g
 
 SK_APIKEY = "jgPHHuhmqGdnSzjE"
@@ -61,7 +62,7 @@ def searchForEventByVenueName(venue_name,index=0):
         url2 = SK_URL + "venues/" + id + "/calendar.json?apikey=" + SK_ID
         data2 = getDataFromURL(url2)
     except:
-        return None
+        return "None"
 
 '''
 Get event data from searching by location name.
@@ -99,7 +100,7 @@ def getPreviewSong(artistName):
         return previewURL
     except Exception as e:
         print("""Exception getPreviewSong! """ + str(e))
-        return None
+        return "None"
 
 def searchForVenue(venue_name):
     url = SK_URL + "search/venues.json?query="+ venue_name +"&apikey=" + SK_APIKEY
@@ -107,9 +108,12 @@ def searchForVenue(venue_name):
 
 def _get(dictionary,key):
     try:
-        return dictionary[key]
+        if dictionary[key] is not None:
+            return dictionary[key]
+        else:
+            return "None"
     except:
-        return None
+        return "None"
 
 '''
 Process songkick api retrieval and build dictionary of relevent info.
@@ -140,12 +144,7 @@ def getEventDataFromSearch(data, index):
             else:
                 dateOfEvent = results["start"]["date"]
         except:
-            dateOfEvent = None
-
-        try:
-            ticket_link = None
-        except:
-            ticket_link = None
+            dateOfEvent = "None"
 
         output = {
             g.ARTIST: artist,
@@ -164,6 +163,7 @@ def getEventDataFromSearch(data, index):
         return """Exception! getEventDataFromSearch """ + str(e)
 
 def test():
+    '''
     keywords = {
         g.CODE:1,
         g.LOCATION:"Philadelphia",
@@ -173,9 +173,14 @@ def test():
         g.VENUE:"Johnny Brendas",
         g.DATE:"Today",
         }
-    print(searchByKeywords(keywords,0))
-    print(searchByKeywords(keywords,1))
-    print(searchByKeywords(keywords,2))
+    print(searchByKeywords(keywords,39.9500,-75.1667,0))
+    print(searchByKeywords(keywords,39.9500,-75.1667,1))
+    print(searchByKeywords(keywords,39.9500,-75.1667,2))
+    '''
+    keywords = nlp.getKeywords("Shows in Chicago")
+    print(keywords)
+    return_json = searchByKeywords(keywords, 39.9500,-75.1667, 0)
+    print(return_json)
 
 
 def searchByKeywords(keywords, latitude, longitude, index):
@@ -202,7 +207,7 @@ def searchByKeywords(keywords, latitude, longitude, index):
         return getEventDataFromSearch(data,index)
     # Shows at a venue
     elif code == 4:
-        pass
+        return {}
     else:
-        return None
+        return {}
 
