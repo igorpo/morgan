@@ -12,6 +12,8 @@ CODE = "code"
 # LOCATION = (String) city name of the location of interest, 
 #            geolocation of device by default (if LOCATION field is nil)
 LOCATION = "location"
+LATITUDE = "latitude"
+LONGITUDE = "longitude"
 
 # ARTIST = (String) artist's name
 ARTIST = "artist"
@@ -25,6 +27,8 @@ VENUENUM = "venue_number"
 VENUEWEB = "venue_website"
 VENUELAT = "venue_lat"
 VENUELNG = "venue_lng"
+
+TICKETS = "buyLink"
 
 # DATE = (Datetime) date of interest, current date by default
 DATE = "date"

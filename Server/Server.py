@@ -1,8 +1,10 @@
 from datetime import timedelta
 from functools import update_wrapper
-from flask import Flask, request, url_for, make_response, current_app
+from flask import Flask, request, url_for, make_response, current_app, jsonify
 import sk
 import nlp
+import json
+import globals as g
 
 try:
     unicode = unicode
@@ -22,6 +24,9 @@ else:
 app = Flask(__name__)
 app.debug = True
 
+'''
+Crossdomain function to avoid crossdomain error
+'''
 def crossdomain(origin=None, methods=None, headers=None,
                 max_age=21600, attach_to_all=True,
                 automatic_options=True):
@@ -63,7 +68,10 @@ def crossdomain(origin=None, methods=None, headers=None,
         return update_wrapper(wrapped_function, f)
     return decorator
 
-
+'''
+Main server response function. Gets information from user device
+and responds with JSON formatted response data.
+'''
 @app.route('/', methods=['POST'])
 @crossdomain(origin='*')
 def queryMorgan():
@@ -71,26 +79,30 @@ def queryMorgan():
         data = str(request.form["user_raw_data"])
         lat = float(request.form["user_lat"])
         lon = float(request.form["user_lon"])
-        index = int(request.form["user_index"])
-        keywords = nlp.getKeywords(data)
+        index = int(request.form["index"])
 
-        return_string = sk.searchByKeywords(keywords, lat, lon, index)
+        keywords = {
+            g.CODE:1,
+            g.LOCATION:"Philadelphia",
+            g.LATITUDE:lat,
+            g.LONGITUDE:lon,
+            g.ARTIST:"Clap Your Hands Say Yeah",
+            g.VENUE:"Johnny Brendas",
+            g.DATE:"Today"}
+
+        #keywords = nlp.getKeywords(data)
+
+        return_json = sk.searchByKeywords(keywords,index)
         # return """Keywords """ + str(keywords) + """ lat: """ + str(lat) + """ lon: """ + str(lon)
-        return str(return_string)
+        return json.dumps(return_json)
 
     except Exception as e:
         return """Exception! queryMorgan """ + str(e)
 
         # Send synthesized string from NLP back to device
+
 '''
-def createReturnData():
-    text =
-    {
-        "response":"Blah blah",
-        "audio":".m4a",
-        "tickets":"http:songkick...",
-        "search_index":0
-    }
+Test function for artist searching
 '''
 @app.route('/<artist_name>/preview', methods=['POST'])
 @crossdomain(origin='*')
@@ -99,43 +111,6 @@ def getPreviewSong(artist_name):
         return sk.getPreviewSong(artist_name)
     except Exception as e:
         return """Exception! getPreviewSong """ + str(e)
-    # except:
-        # return_string = None
 
-    # if return_string is None:
-        # return_string = "Hmm. Looks like something went wrong. Let me call my IT person."
-
-    #return return_string
-
-# def test(mystring):
-#     # Get map of keywords back from NLP
-#     data = mystring
-#     lat = 39.9500
-#     long = -75.1667
-
-#     keywords = nlp.getKeywords(data)
-
-#     # Seach SK based on keywords
-#     return_string = sk.searchByKeywords(keywords, lat, long)
-
-#     if return_string is None:
-#         return_string = "Hmm. Looks like something went wrong. Let me call my IT fucker."
-
-#     return return_string
-
-
-# #app.secret_key = 'This is really unique and secret'
-
-@app.route('/test', methods=['POST'])
-@crossdomain(origin='*')
-def hello_person():
-    return """testReturn"""
-    # return """
-    #     <p>Input sample code.</p>
-    #     <form method="POST" action="%s">
-    #     <input name="user_raw_data" />
-    #     <input name="user_lat" />
-    #     <input name="user_lon" />
-    #     <input type="submit" value="Go!" />
-    #     </form>
-    #     """ % (url_for('queryMorgan'),)
+def tj():
+    print(json.dumps({"hello":1, "world":2}))
