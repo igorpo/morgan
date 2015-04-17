@@ -1,5 +1,5 @@
 import requests
-import nlp
+import nlp2 as nlp
 import globals as g
 
 SK_APIKEY = "jgPHHuhmqGdnSzjE"

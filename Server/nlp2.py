@@ -3,7 +3,7 @@ import nltk
 import globals as g
 import csv
 from random import randint
-import urllib2
+import requests
 import json
 import string
 
@@ -18,10 +18,10 @@ echo_api_request = "http://developer.echonest.com/api/v4/artist/search?api_key=%
 # ITERATION 2:
 # TODO: remove stopwords adjacent to artist keywords
 # TODO: remove punctuation from truncated user input string (without artist keyword)
-# TODO: get custom responses working 
+# TODO: get custom responses working
 
 
-# friendly messages to randomly include 
+# friendly messages to randomly include
 # along with the link to tickets / preview / show suggestion
 customresponses = {	"Tickets": ["Super! You can get tickets here: ",
 								"Good choice. Here you go: ",
@@ -55,7 +55,7 @@ artist_keywords = ["show", "shows", "concert", "concerts", "playing"]
 #	"who can i go see tonight"
 #   "is there a concert nearby tonight"
 geolocation_phrases = ["nearby", "near me", "tonight"]
- 
+
 
 def parse_text(text, return_responses):
 
@@ -69,7 +69,7 @@ def parse_text(text, return_responses):
 	# look for location using keyword "in"
 	if 'in' in text:
 		i = text.index('in')
-		
+
 		# get the rest of the sentence after keyword into a single string
 		location = text[i + 1: len(text)]
 		location = " ".join(location)
@@ -95,8 +95,8 @@ def parse_text(text, return_responses):
 		if city_exists:
 			# save this location in the data sent to server
 			return_responses[g.CODE] = 2 # user's query = find shows by location
-			return_responses[g.LOCATION] = city 
-	
+			return_responses[g.LOCATION] = city
+
 		else:
 			# ask the user for a well-formatted query
 			return_responses[g.CODE] = 0 # user's query = not understood
@@ -114,7 +114,7 @@ def parse_text(text, return_responses):
 		# try to parse a city name
 		city_exists = False
 		city_text = " ".join(text).strip()
-		#city_text = "".join(ch for ch in city_text if ch not in punct_set) # remove punct 
+		#city_text = "".join(ch for ch in city_text if ch not in punct_set) # remove punct
 		# search for city name in csv data
 		for one_city in city_state_data:
 			# compare our city's name to this city
@@ -133,18 +133,18 @@ def parse_text(text, return_responses):
 				truncated_text = text[0: text.index(word)]
 
 		if truncated_text:
-			# search prioritized permutations of truncated text  
+			# search prioritized permutations of truncated text
 			n = len(truncated_text)
 			for i in range(2):
 				for j in range(0, n-i):
 					# get permutation string to search api for
 					current_text = " ".join(truncated_text[j:n-i])
-					#current_text = "".join(ch for ch in current_text if ch not in punct_set) # remove punct 
+					#current_text = "".join(ch for ch in current_text if ch not in punct_set) # remove punct
 					current_text = current_text.strip().replace(" ", "_")
-					print current_text
+					print(current_text)
 					# search api and set artist if exists
 					artist_exists = searchForArtist(current_text)
-					if artist_exists: 
+					if artist_exists:
 						artist = current_text
 						break
 				if artist:
@@ -153,13 +153,13 @@ def parse_text(text, return_responses):
 		# search whole string
 		else:
 			artist_text = " ".join(text).strip()
-			#artist_text = "".join(ch for ch in artist_text if ch not in punct_set) # remove punct 
+			#artist_text = "".join(ch for ch in artist_text if ch not in punct_set) # remove punct
 
 			# search for artist in API
 			artist_exists = searchForArtist(artist_text)
-			if artist_exists: 
+			if artist_exists:
 				artist = artist_text
-			
+
 
 
 		# (1) check for location
@@ -167,15 +167,15 @@ def parse_text(text, return_responses):
 			return_responses[g.CODE] = 2 # user's query = find shows by location
 			return_responses[g.LOCATION] = city_text
 
-		# (2) check for artist 
+		# (2) check for artist
 		elif artist_exists:
 			return_responses[g.CODE] = 3 # user's query = find shows by artist
-			return_responses[g.ARTIST] = artist 
+			return_responses[g.ARTIST] = artist
 
 
 		# (3) check for geolocation
 		elif any(word in text for word in geolocation_phrases):
-			return_responses[g.CODE] = 1 # user's query = shows near me query 
+			return_responses[g.CODE] = 1 # user's query = shows near me query
 
 
 		# (4) if nothing found, prompt user for new query
@@ -196,15 +196,15 @@ def getKeywords(text):
 	loadCsvData()
 
 	return_responses = { g.CODE: None,
-						 g.LOCATION: None, 
-						 g.ARTIST: None, 
-						 g.VENUE: None, 
+						 g.LOCATION: None,
+						 g.ARTIST: None,
+						 g.VENUE: None,
 						 g.DATE: None,
 						 g.MESSAGE: {g.M_TICKET: None,
 									 g.M_PREVIEW: None,
 									 g.M_SHOW: None,
 									 g.M_OTHER: None} }
-	
+
 	parse_text(text, return_responses)
 
 
@@ -213,7 +213,7 @@ def getKeywords(text):
 	return_responses[g.MESSAGE][g.M_PREVIEW] = " "
 		#customresponses["Preview"][randint(0, len(customresponses["Preview"]))]
 	return_responses[g.MESSAGE][g.M_SHOW] = " "
-		#customresponses["Show"][randint(0, len(customresponses["Show"]))]	
+		#customresponses["Show"][randint(0, len(customresponses["Show"]))]
 	#for p in return_responses:	print p, ",", return_responses[p]
 	return return_responses
 
@@ -254,14 +254,14 @@ def loadCsvData():
 
 
 def searchForArtist(potential_artist):
-	
+
 	url = echo_api_request%(echo_api_key, potential_artist)
 
-	try: data = urllib2.urlopen(url)
-	except urllib2.HTTPError: 
+	try: data = request.get(url)
+	except e:
 		sys.stderr.write('BAD REQUEST\n')
 		return False
-	try: 
+	try:
 		response = json.loads(data.read())
 	except ValueError:
 		sys.stderr.write('JSON ERROR\n')
@@ -274,4 +274,4 @@ def searchForArtist(potential_artist):
 
 
 
-	
+
