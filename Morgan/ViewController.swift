@@ -27,6 +27,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     
     var currentSongUrl = ""
     
+    @IBOutlet var showPaneAtWill: UIBarButtonItem!
     var buyLink : String = ""
     
     var player = AVPlayer()
@@ -53,6 +54,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         createMorganTitleAndSubtitle()
         self.tableView.delegate = self
         messageTextField.delegate = self
+        showPaneAtWill.enabled = false
         
         setUpLocation()
         let content1 = "Hello! I'm Morgan! Tell me things like: 'show me concerts in New York' or 'concerts near me' "
@@ -144,15 +146,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         if let jsonResult = NSJSONSerialization.JSONObjectWithData(jsonData, options: NSJSONReadingOptions.MutableContainers, error: &err) as? NSDictionary {
             if(err != nil) {
                 // If there is an error parsing JSON, print it to the console
-                println("JSON Error \(err!.localizedDescription)")
+                println("JSON Error: \(err!.localizedDescription)")
                 
             } else {
                 date = jsonResult["date"] as! String
                 artist = jsonResult["artist"] as! String
                 venue = jsonResult["venue"] as! String
                 previewURL = jsonResult["preview"] as! String
-                buyLink = jsonResult["ticketLink"] != nil ? jsonResult["ticketLink"] as! String : "http://www.ticketmaster.com/?id=234234234"
-                content = "\(artist) is playing at \(venue) on \(date). Tap one of the following buttons for more info, or simply type a new question"
+                buyLink = jsonResult["buyLink"] as! String != "None" ? jsonResult["buyLink"] as! String : "http://www.ticketmaster.com/"
+                content = "\(artist) is playing at \(venue) on \(date). You can tap one of the following buttons for more info, or simply ask Morgan something else!"
                 println(content)
                 var message:Message = Message(content: content, isMorgan: true)
                 messages.append(message)
@@ -162,6 +164,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         } else {
             println("json results didnt work")
         }
+        
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.showPaneAtWill.enabled = true
+            
+        })
         
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.removeMorganIsTyping()
