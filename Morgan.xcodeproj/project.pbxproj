@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		672ED2B41AF04D6B00A5DB5F /* PageContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 672ED2B31AF04D6B00A5DB5F /* PageContentViewController.swift */; };
+		672ED2B61AF054FD00A5DB5F /* FirstViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 672ED2B51AF054FD00A5DB5F /* FirstViewController.swift */; };
 		B60815131AC8AE7B0073360A /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60815121AC8AE7B0073360A /* Server.swift */; };
 		B6A519AC1AC23A46006CA147 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A519AB1AC23A46006CA147 /* AppDelegate.swift */; };
 		B6A519AF1AC23A46006CA147 /* Morgan.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B6A519AD1AC23A46006CA147 /* Morgan.xcdatamodeld */; };
@@ -30,6 +32,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		672ED2B31AF04D6B00A5DB5F /* PageContentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageContentViewController.swift; sourceTree = "<group>"; };
+		672ED2B51AF054FD00A5DB5F /* FirstViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirstViewController.swift; sourceTree = "<group>"; };
 		B60815121AC8AE7B0073360A /* Server.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Server.swift; path = ../Server.swift; sourceTree = "<group>"; };
 		B6A519A61AC23A46006CA147 /* Morgan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Morgan.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6A519AA1AC23A46006CA147 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -89,6 +93,8 @@
 				B6A519AB1AC23A46006CA147 /* AppDelegate.swift */,
 				B6A519B01AC23A46006CA147 /* ViewController.swift */,
 				B6A519B21AC23A46006CA147 /* Main.storyboard */,
+				672ED2B51AF054FD00A5DB5F /* FirstViewController.swift */,
+				672ED2B31AF04D6B00A5DB5F /* PageContentViewController.swift */,
 				B6A519D01AC2442B006CA147 /* Message.swift */,
 				B6A519CE1AC24073006CA147 /* TableViewController.swift */,
 				B6A519B51AC23A46006CA147 /* Images.xcassets */,
@@ -227,6 +233,8 @@
 				B6A519B11AC23A46006CA147 /* ViewController.swift in Sources */,
 				B6A519AC1AC23A46006CA147 /* AppDelegate.swift in Sources */,
 				B6A519D11AC2442B006CA147 /* Message.swift in Sources */,
+				672ED2B61AF054FD00A5DB5F /* FirstViewController.swift in Sources */,
+				672ED2B41AF04D6B00A5DB5F /* PageContentViewController.swift in Sources */,
 				B6A519AF1AC23A46006CA147 /* Morgan.xcdatamodeld in Sources */,
 				B60815131AC8AE7B0073360A /* Server.swift in Sources */,
 				B6A519CF1AC24073006CA147 /* TableViewController.swift in Sources */,

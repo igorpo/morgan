@@ -275,9 +275,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             theLabel.lineBreakMode = .ByWordWrapping
             theLabel.numberOfLines = 0
             theLabel.text = messages[indexPath.row].content
-            
             theLabel.sizeToFit()
-            let numCharsInLabel: CGFloat = CGFloat(count(theLabel.text!))
+            var labelTextCount : Int = theLabel.text!.lengthOfBytesUsingEncoding(NSUTF16StringEncoding) / 2
+            let numCharsInLabel: CGFloat = CGFloat(labelTextCount)
             let size = NSString(string: theLabel.text!).sizeWithAttributes([NSFontAttributeName: theLabel.font])
             let setTxtWidth = (numCharsInLabel < 30) ? size.width : size.width / (numCharsInLabel / 26.0)
             let rect = CGRectMake(theLabel.frame.origin.x, theLabel.frame.origin.y, setTxtWidth, theLabel.frame.height)
@@ -303,7 +303,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             theLabel.text = messages[indexPath.row].content
             theLabel.textAlignment = .Left
             theLabel.sizeToFit()
-            let numCharsInLabel = CGFloat(count(theLabel.text!))
+            var labelTextCount : Int = theLabel.text!.lengthOfBytesUsingEncoding(NSUTF16StringEncoding) / 2
+            let numCharsInLabel = CGFloat(labelTextCount)
             if (numCharsInLabel < 26) {
                 theLabel.textAlignment = .Right
             }
