@@ -6,6 +6,7 @@ from random import randint
 import requests
 import json
 import string
+import states as fuck
 
 city_state_filename = "city_state.csv"
 state_abbrev_filename = "state_abbreviation.csv"
@@ -141,7 +142,7 @@ def parse_text(text, return_responses):
 					current_text = " ".join(truncated_text[j:n-i])
 					#current_text = "".join(ch for ch in current_text if ch not in punct_set) # remove punct
 					current_text = current_text.strip().replace(" ", "_")
-					print(current_text)
+					#print(current_text)
 					# search api and set artist if exists
 					artist_exists = searchForArtist(current_text)
 					if artist_exists:
@@ -185,37 +186,37 @@ def parse_text(text, return_responses):
 				"I'm sorry! I don't understand what you're asking. Hit me with something else!"
 
 
-
-
-
-
 def getKeywords(text):
 
 	# initialize the csv data
 	# TODO: have server code do this once and store
-	loadCsvData()
+	# loadCsvData()
 
-	return_responses = { g.CODE: None,
-						 g.LOCATION: None,
-						 g.ARTIST: None,
-						 g.VENUE: None,
-						 g.DATE: None,
-						 g.MESSAGE: {g.M_TICKET: None,
-									 g.M_PREVIEW: None,
-									 g.M_SHOW: None,
-									 g.M_OTHER: None} }
+    city_state_data = fuck.states
 
-	parse_text(text, return_responses)
+    return_responses = {
+	    g.CODE: None,
+	    g.LOCATION: None,
+        g.ARTIST: None,
+        g.VENUE: None,
+        g.DATE: None,
+		g.MESSAGE: {
+            g.M_TICKET: None,
+            g.M_PREVIEW: None,
+            g.M_SHOW: None,
+            g.M_OTHER: None}}
+
+    parse_text(text, return_responses)
 
 
-	return_responses[g.MESSAGE][g.M_TICKET] = " "
-		#customresponses["Tickets"][randint(0, len(customresponses["Tickets"]))]
-	return_responses[g.MESSAGE][g.M_PREVIEW] = " "
-		#customresponses["Preview"][randint(0, len(customresponses["Preview"]))]
-	return_responses[g.MESSAGE][g.M_SHOW] = " "
-		#customresponses["Show"][randint(0, len(customresponses["Show"]))]
-	#for p in return_responses:	print p, ",", return_responses[p]
-	return return_responses
+    return_responses[g.MESSAGE][g.M_TICKET] = " "
+    	#customresponses["Tickets"][randint(0, len(customresponses["Tickets"]))]
+    return_responses[g.MESSAGE][g.M_PREVIEW] = " "
+    	#customresponses["Preview"][randint(0, len(customresponses["Preview"]))]
+    return_responses[g.MESSAGE][g.M_SHOW] = " "
+    	#customresponses["Show"][randint(0, len(customresponses["Show"]))]
+    #for p in return_responses:	print p, ",", return_responses[p]
+    return return_responses
 
 
 
@@ -258,7 +259,7 @@ def searchForArtist(potential_artist):
 	url = echo_api_request%(echo_api_key, potential_artist)
 
 	try: data = request.get(url)
-	except e:
+	except:
 		sys.stderr.write('BAD REQUEST\n')
 		return False
 	try:

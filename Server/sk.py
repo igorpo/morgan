@@ -177,7 +177,7 @@ def test():
     print(searchByKeywords(keywords,39.9500,-75.1667,1))
     print(searchByKeywords(keywords,39.9500,-75.1667,2))
     '''
-    keywords = nlp.getKeywords("Shows in Chicago")
+    keywords = nlp.getKeywords("Shows near me")
     print(keywords)
     return_json = searchByKeywords(keywords, 39.9500,-75.1667, 0)
     print(return_json)
