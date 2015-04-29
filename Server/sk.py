@@ -1,8 +1,10 @@
+#!/usr/bin/env python2.7
 import requests
 import nlp2 as nlp
 import globals as g
 
 SK_APIKEY = "jgPHHuhmqGdnSzjE"
+EN_APIKEY = "NBXSOUGUPQXDHPCGX"
 SK_URL = "http://api.songkick.com/api/3.0/"
 
 '''
@@ -39,6 +41,18 @@ def searchForArtistID(artist_name, index=0):
         return data["resultsPage"]["results"]["artist"][index]["id"]
     except Exception as e:
         return """Exception! searchForArtistID """ + str(e)
+
+'''
+Find artist id using songkick and then find image using echonest
+'''
+def searchForArtistImage(artist_name):
+    try:
+        id = searchForArtistID(artist_name)
+        url = "http://developer.echonest.com/api/v4/artist/images?api_key=NBXSOUGUPQXDHPCGX&id=songkick:artist:" + str(id) + "&format=json"
+        data = getDataFromURL(url)
+        return data["response"]["images"][0]["url"]
+    except:
+        return None
 
 '''
 Use the songkick api to lookup venue data given a venue id
@@ -118,7 +132,7 @@ def _get(dictionary,key):
 '''
 Process songkick api retrieval and build dictionary of relevent info.
 '''
-def getEventDataFromSearch(data, index):
+def getEventDataFromSearch(data, index=0):
     try:
         if index >= len(data["resultsPage"]["results"]["event"]):
             index = 0
@@ -146,6 +160,8 @@ def getEventDataFromSearch(data, index):
         except:
             dateOfEvent = "None"
 
+        picture = searchForArtistImage(artist)
+
         output = {
             g.ARTIST: artist,
             g.PREVIEW: preview,
@@ -155,7 +171,8 @@ def getEventDataFromSearch(data, index):
             g.VENUELAT: venue_lat,
             g.VENUELNG: venue_lng,
             g.DATE: dateOfEvent,
-            g.TICKETS: tickets
+            g.TICKETS: tickets,
+            g.PICTURE: picture
         }
         return output
 
@@ -202,6 +219,7 @@ def searchByKeywords(keywords, latitude, longitude, index):
         data = searchForEventByLocationName(location)
         return getEventDataFromSearch(data,index)
     # Shows by an artist
+    # add preview picture
     elif code == 3:
         data = searchForEventByArtistName(artist)
         return getEventDataFromSearch(data,index)

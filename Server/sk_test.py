@@ -1,3 +1,4 @@
+#!/usr/bin/env python2.7
 import sk
 import imp
 
@@ -19,6 +20,7 @@ def returnResult(name,result, passed):
     print(name)
     if passed:
         print("---PASSED---")
+        print(result)
     else:
         print("*--FAILED--*")
         print("Error: " + str(result))
