@@ -71,11 +71,38 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="purchaseCell" rowHeight="171" id="y2I-s6-RHL">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="purchaseCell" rowHeight="184" id="y2I-s6-RHL">
                                         <rect key="frame" x="-9" y="45" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="y2I-s6-RHL" id="WBn-PQ-pjt">
                                             <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <view tag="800" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2nF-cU-L2p">
+                                                    <rect key="frame" x="6" y="8" width="195" height="143"/>
+                                                    <subviews>
+                                                        <mapView clipsSubviews="YES" multipleTouchEnabled="YES" tag="223" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="ViI-ss-n9s">
+                                                            <rect key="frame" x="0.0" y="0.0" width="195" height="111"/>
+                                                        </mapView>
+                                                        <button opaque="NO" tag="222" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0VY-4W-J5D" customClass="UIPurchaseButton" customModule="Morgan" customModuleProvider="target">
+                                                            <rect key="frame" x="39" y="113" width="117" height="30"/>
+                                                            <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="15"/>
+                                                            <state key="normal" title="Purchase Tickets">
+                                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                            </state>
+                                                        </button>
+                                                    </subviews>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="195" id="5Yj-wF-vse"/>
+                                                        <constraint firstAttribute="height" constant="143" id="tXs-Qx-cDJ"/>
+                                                    </constraints>
+                                                </view>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="2nF-cU-L2p" firstAttribute="leading" secondItem="WBn-PQ-pjt" secondAttribute="leadingMargin" constant="-2" id="BK2-gK-S6S"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="2nF-cU-L2p" secondAttribute="bottom" constant="24" id="Zpa-Bl-Jfn"/>
+                                                <constraint firstItem="2nF-cU-L2p" firstAttribute="top" secondItem="WBn-PQ-pjt" secondAttribute="topMargin" id="kd2-zY-OlI"/>
+                                            </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="previewCell" rowHeight="184" id="sqT-Ox-kcV">

@@ -18,7 +18,9 @@ class Message: NSObject {
     var isMorgan: Bool
     var artist: String = ""
     var previewImgUrl : String = ""
-    
+    var lon : Double = 0
+    var lat : Double = 0
+    var buyLink : String = ""
     
     
     var type : MessageType
@@ -46,6 +48,15 @@ class Message: NSObject {
         self.type = type
         self.artist = artist
         self.previewImgUrl = previewImgUrl
+    }
+
+    init(content: String, isMorgan: Bool, type: MessageType, lon: Double, lat: Double, buyLink: String) {
+        self.content = content
+        self.isMorgan = isMorgan
+        self.type = type
+        self.lon = lon
+        self.lat = lat
+        self.buyLink = buyLink
     }
     
     func getType() -> MessageType {

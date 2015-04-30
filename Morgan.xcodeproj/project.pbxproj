@@ -11,6 +11,9 @@
 		672ED2B41AF04D6B00A5DB5F /* PageContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 672ED2B31AF04D6B00A5DB5F /* PageContentViewController.swift */; };
 		672ED2B61AF054FD00A5DB5F /* FirstViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 672ED2B51AF054FD00A5DB5F /* FirstViewController.swift */; };
 		67DBCA4E1AF1A10300DF3F49 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67DBCA4D1AF1A10300DF3F49 /* Foundation.framework */; };
+		67DBCA521AF2E17F00DF3F49 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67DBCA511AF2E17F00DF3F49 /* MapKit.framework */; };
+		67DBCA541AF2ECAD00DF3F49 /* UIPurchaseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67DBCA531AF2ECAD00DF3F49 /* UIPurchaseButton.swift */; };
+		67DBCA561AF2EF3800DF3F49 /* Responses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67DBCA551AF2EF3800DF3F49 /* Responses.swift */; };
 		B60815131AC8AE7B0073360A /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60815121AC8AE7B0073360A /* Server.swift */; };
 		B6A519AC1AC23A46006CA147 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A519AB1AC23A46006CA147 /* AppDelegate.swift */; };
 		B6A519AF1AC23A46006CA147 /* Morgan.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B6A519AD1AC23A46006CA147 /* Morgan.xcdatamodeld */; };
@@ -40,6 +43,9 @@
 		672ED2B31AF04D6B00A5DB5F /* PageContentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageContentViewController.swift; sourceTree = "<group>"; };
 		672ED2B51AF054FD00A5DB5F /* FirstViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirstViewController.swift; sourceTree = "<group>"; };
 		67DBCA4D1AF1A10300DF3F49 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		67DBCA511AF2E17F00DF3F49 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		67DBCA531AF2ECAD00DF3F49 /* UIPurchaseButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIPurchaseButton.swift; path = ../UIPurchaseButton.swift; sourceTree = "<group>"; };
+		67DBCA551AF2EF3800DF3F49 /* Responses.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Responses.swift; sourceTree = "<group>"; };
 		B60815121AC8AE7B0073360A /* Server.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Server.swift; path = ../Server.swift; sourceTree = "<group>"; };
 		B6A519A61AC23A46006CA147 /* Morgan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Morgan.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6A519AA1AC23A46006CA147 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -61,6 +67,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				67DBCA521AF2E17F00DF3F49 /* MapKit.framework in Frameworks */,
 				67DBCA4E1AF1A10300DF3F49 /* Foundation.framework in Frameworks */,
 				14E762AE8ACB550615B0F10D /* Pods.framework in Frameworks */,
 			);
@@ -79,6 +86,7 @@
 		AC3138ED11AEC1433F6B0AC7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				67DBCA511AF2E17F00DF3F49 /* MapKit.framework */,
 				67DBCA4D1AF1A10300DF3F49 /* Foundation.framework */,
 				0B2D1A194D11710329FAFC97 /* Pods.framework */,
 			);
@@ -120,10 +128,12 @@
 				B60815121AC8AE7B0073360A /* Server.swift */,
 				B6A519AB1AC23A46006CA147 /* AppDelegate.swift */,
 				B6A519B01AC23A46006CA147 /* ViewController.swift */,
+				67DBCA551AF2EF3800DF3F49 /* Responses.swift */,
 				B6A519B21AC23A46006CA147 /* Main.storyboard */,
 				672ED2B51AF054FD00A5DB5F /* FirstViewController.swift */,
 				672ED2B31AF04D6B00A5DB5F /* PageContentViewController.swift */,
 				B6A519D01AC2442B006CA147 /* Message.swift */,
+				67DBCA531AF2ECAD00DF3F49 /* UIPurchaseButton.swift */,
 				B6A519CE1AC24073006CA147 /* TableViewController.swift */,
 				B6A519B51AC23A46006CA147 /* Images.xcassets */,
 				B6A519B71AC23A46006CA147 /* LaunchScreen.xib */,
@@ -309,10 +319,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				67DBCA561AF2EF3800DF3F49 /* Responses.swift in Sources */,
 				B6A519B11AC23A46006CA147 /* ViewController.swift in Sources */,
 				B6A519AC1AC23A46006CA147 /* AppDelegate.swift in Sources */,
 				B6A519D11AC2442B006CA147 /* Message.swift in Sources */,
 				672ED2B61AF054FD00A5DB5F /* FirstViewController.swift in Sources */,
+				67DBCA541AF2ECAD00DF3F49 /* UIPurchaseButton.swift in Sources */,
 				672ED2B41AF04D6B00A5DB5F /* PageContentViewController.swift in Sources */,
 				B6A519AF1AC23A46006CA147 /* Morgan.xcdatamodeld in Sources */,
 				B60815131AC8AE7B0073360A /* Server.swift in Sources */,

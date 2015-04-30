@@ -10,6 +10,7 @@ import UIKit
 import AVFoundation
 import CoreLocation
 import Foundation
+import MapKit
 
 var KEYBOARD_HEIGHT: CGFloat = 0
 class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate, CLLocationManagerDelegate {
@@ -29,6 +30,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     let BOTTOM_CONSTRAINT: CGFloat = 10.0
     var userLoc: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 0, longitude: 0)
     var manager: CLLocationManager = CLLocationManager()
+    var venueLon : Double = 0
+    var venueLat : Double = 0
+    
+    
+    
     
     @IBOutlet var tableView: UITableView!
     @IBOutlet var messageTextField: UITextField!
@@ -141,18 +147,28 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                 date = jsonResult["date"] as! String
                 self.artist = jsonResult["artist"] as! String
                 self.artist_pic = jsonResult["artist_picture"] as! String
+
+//                self.venueLon = (jsonResult["venue_lng"] as? NSString)!.doubleValue
+                self.venueLon = jsonResult["venue_lng"]!.doubleValue
+                self.venueLat = jsonResult["venue_lat"]!.doubleValue
+//                self.venueLat = (jsonResult["venue_lat"] as? NSString)!.doubleValue
                 venue = jsonResult["venue"] as! String
                 previewURL = jsonResult["preview"] as! String
                 buyLink = jsonResult["buyLink"] as! String != "None" ? jsonResult["buyLink"] as! String : "http://www.ticketmaster.com/"
                 content = "\(self.artist) is playing at \(venue) on \(date). You can tap one of the following buttons for more info, or simply ask Morgan something else!"
                 println(content)
+                
                 var message:Message = Message(content: content, isMorgan: true)
-                messages.append(message)
-                updateTableView()
+                var anteMessage : Message = Responses.returnShowResponseMessage()
+
+                morganAnswersWithAnteMessage(anteMessage, message: message)
             }
             
         } else {
             println("json results didnt work")
+            
+            // random SORRY messages for bad queries
+            
         }
         
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -167,6 +183,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             self.showAnswerButtons()
         })
 
+    }
+    
+    func morganAnswersWithAnteMessage(anteMessage : Message, message: Message) {
+        // send first message, delay, second message
+        messages.append(anteMessage)
+        updateTableView()
+        // delay here:
+        messages.append(message)
     }
     
     /*
@@ -388,6 +412,34 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             imgView.image = UIImage(data: data!)
 //            imgView.layer.cornerRadius = 8
 //            imgView.image = image
+        } else if cellIdentifier == "purchaseCell" {
+            println(currentMessage.lat)
+            
+            var venueMap : MKMapView = cell.viewWithTag(223) as! MKMapView
+            let location : CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: currentMessage.lat, longitude: currentMessage.lon)
+            
+            var information = MKPointAnnotation()
+            information.coordinate = location
+            
+            // set zoom
+            let span: MKCoordinateSpan = MKCoordinateSpanMake(0.003, 0.003)
+            let region: MKCoordinateRegion = MKCoordinateRegionMake(location, span)
+            
+            venueMap.addAnnotation(information)
+            venueMap.setRegion(region, animated: true)
+            let box : UIView = (cell.viewWithTag(800) as UIView?)!
+            box.layer.cornerRadius = 10.0
+            box.layer.borderColor = UIColor.grayColor().CGColor
+            box.layer.borderWidth = 0.5
+            box.clipsToBounds = true
+            
+            box.layer.shadowOffset = CGSize(width: 6, height: 6)
+            box.layer.shadowOpacity = 0.7
+            box.layer.shadowRadius = 2
+            
+            let purchaseBtn : UIPurchaseButton = cell.viewWithTag(222) as! UIPurchaseButton
+            purchaseBtn.buyLink = currentMessage.buyLink
+            purchaseBtn.addTarget(self, action: "openPurchaseUrl:", forControlEvents: .TouchUpInside)
         }
         return cell
     }
@@ -589,6 +641,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         button1.addTarget(self, action: "showTicketsLink", forControlEvents: .TouchUpInside)
         button2.addTarget(self, action: "showPreviewSong", forControlEvents: .TouchUpInside)
         button3.addTarget(self, action: "showNextResult", forControlEvents: .TouchUpInside)
+        self.tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: messages.count - 1, inSection: 0), atScrollPosition: UITableViewScrollPosition.Bottom, animated: true)
         
     }
     
@@ -597,9 +650,19 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
      */
     func sendMorganMessageFromAutoRepsonseButton(message : String, type: Message.MessageType) {
         let messageText = message
-        var message:Message = Message(content: messageText, isMorgan: true, type: type, artist: self.artist, previewImgUrl: self.artist_pic)
-        messages.append(message)
-        updateTableView()
+        var message : Message
+        var anteMessage : Message
+        if type == Message.MessageType.Purchase {
+            message = Message(content: messageText, isMorgan: true, type: type, lon: self.venueLon, lat: self.venueLat, buyLink: self.buyLink)
+            anteMessage = Responses.returnTicketResponseMessage()
+
+        } else {
+            message = Message(content: messageText, isMorgan: true, type: type, artist: self.artist, previewImgUrl: self.artist_pic)
+            anteMessage = Responses.returnPreviewResponseMessage()
+        }
+        
+        morganAnswersWithAnteMessage(anteMessage, message: message)
+
 //        Server.postToServer(message.content, lat: Double(userLoc.latitude), lon: Double(userLoc.longitude))
         dismissAutoResponsePane()
     }
@@ -617,19 +680,21 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
      * Bring up tix link
      */
     func showTicketsLink() {
-        let button = UIBarButtonItem(barButtonSystemItem:UIBarButtonSystemItem.Action, target: self, action: "openPurchaseUrl")
-        self.navigationController?.navigationBar.topItem?.rightBarButtonItem = button
+//        let button = UIBarButtonItem(barButtonSystemItem:UIBarButtonSystemItem.Action, target: self, action: "openPurchaseUrl")
+//        self.navigationController?.navigationBar.topItem?.rightBarButtonItem = button
         
         sendMorganMessageFromAutoRepsonseButton("Tap the action button on the top right to purchase tickets!", type: Message.MessageType.Purchase)
         
     }
     
-    func openPurchaseUrl() {
+    func openPurchaseUrl(buyButton : UIPurchaseButton) {
+
+
         let optionMenu = UIAlertController(title: nil, message: "Choose Option", preferredStyle: .ActionSheet)
-        
+
         let buyAction = UIAlertAction(title: "Open in Safari", style: .Default, handler: {
             (alert: UIAlertAction!) -> Void in
-            UIApplication.sharedApplication().openURL(NSURL(string: self.buyLink)!)
+            UIApplication.sharedApplication().openURL(NSURL(string: buyButton.buyLink)!)
             
         })
         
@@ -654,7 +719,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         gIndex++
         Server.postToServer(latestQuery, lat: Double(userLoc.latitude), lon: Double(userLoc.longitude), index:gIndex)
         showMorganIsTyping()
-        sendMorganMessageFromAutoRepsonseButton("np, coming up", type: Message.MessageType.Regular)
     }
     
     func showMorganIsTyping() {
