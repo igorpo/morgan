@@ -1,6 +1,7 @@
 #!/usr/bin/env python2.7
 import requests
 import globals as g
+from datetime import date
 
 SK_APIKEY = "jgPHHuhmqGdnSzjE"
 EN_APIKEY = "NBXSOUGUPQXDHPCGX"
@@ -124,6 +125,23 @@ def searchForVenue(venue_name):
     data = getDataFromURL(url)
 
 '''
+Create a string given the YYYY-MM-DDTHH:MM:SS format
+'''
+def getStringFromDate(date):
+    try:
+        try:
+            d_t = date.split("T")
+            d = d_t[0].split("-")
+            t = d_t[1].split(":")
+            day = date(day=d[2], month = d[1], year=d[0]).strftime('%A %d %B %Y')
+            return day + " at" + t[0] + ":" + t[1]
+        except:
+            d = date.split("-")
+            return date(day=d[2], month = d[1], year=d[0]).strftime('%A %d %B %Y')
+    except:
+        return "None"
+
+'''
 Helper method for looking up dictionary keys. Returns a string of None rather
 than a None object. This is easier for the device code to handle.
 '''
@@ -197,9 +215,10 @@ def getEventDataFromSearch(data, index=0):
             g.VENUEWEB: venue_website,
             g.VENUELAT: venue_lat,
             g.VENUELNG: venue_lng,
-            g.DATE: dateOfEvent,
+            g.DATE: getStringFromDate(dateOfEvent),
             g.TICKETS: tickets,
-            g.PICTURE: picture
+            g.PICTURE: picture,
+            g.MESSAGE: "None"
         }
         return output
 
@@ -217,11 +236,26 @@ def searchByKeywords(keywords, latitude, longitude, index):
     location = keywords[g.LOCATION]
     artist = keywords[g.ARTIST]
     venue = keywords[g.VENUE]
+    message = keywords[g.MESSAGE]
     date = keywords[g.DATE]
+
 
     # Unrecognized query
     if code == 0:
-        pass
+        output = {
+                g.ARTIST: "None",
+                g.PREVIEW: "None",
+                g.VENUE: "None",
+                g.VENUENUM: "None",
+                g.VENUEWEB: "None",
+                g.VENUELAT: "None",
+                g.VENUELNG: "None",
+                g.DATE: "None",
+                g.TICKETS: "None",
+                g.PICTURE: "None",
+                g.MESSAGE: message
+            }
+        return output
     # Shows near me query
     elif code == 1:
         data = searchForEventByLocationCoordinates(latitude, longitude)
@@ -272,6 +306,4 @@ def test():
     data3 = searchForEventByLocationName("Philadelphia")
     print(getEventDataFromSearch(data3))
     '''
-
-test()
 
