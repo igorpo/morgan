@@ -28,7 +28,7 @@
                             </button>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" directionalLockEnabled="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" indicatorStyle="black" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="66" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="x1O-yt-hoX">
                                 <rect key="frame" x="0.0" y="64" width="320" height="458"/>
-                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="morganCell" rowHeight="66" id="l2g-kB-I0z">
                                         <rect key="frame" x="-9" y="45" width="320" height="44"/>
@@ -38,7 +38,7 @@
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" tag="1" contentMode="left" text="Message from Morgan" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kft-dJ-g9u">
                                                     <rect key="frame" x="15" y="13" width="207" height="39.5"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="14"/>
                                                     <color key="textColor" red="0.53333333329999999" green="0.30196078430000001" blue="0.76862745099999996" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -59,7 +59,7 @@
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" tag="1" contentMode="left" misplaced="YES" text="Message from user" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Va1-DK-WKW">
                                                     <rect key="frame" x="98" y="13" width="207" height="40"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="14"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
@@ -68,6 +68,82 @@
                                                 <constraint firstItem="Va1-DK-WKW" firstAttribute="leading" secondItem="FZ8-t0-g61" secondAttribute="leadingMargin" constant="90" id="ctl-2C-A2o"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="Va1-DK-WKW" secondAttribute="trailing" constant="7" id="j04-Lm-sdq"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="Va1-DK-WKW" secondAttribute="bottom" constant="5" id="lqk-C2-frf"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="purchaseCell" rowHeight="184" id="y2I-s6-RHL">
+                                        <rect key="frame" x="-9" y="45" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="y2I-s6-RHL" id="WBn-PQ-pjt">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <view tag="800" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2nF-cU-L2p">
+                                                    <rect key="frame" x="6" y="8" width="195" height="143"/>
+                                                    <subviews>
+                                                        <mapView clipsSubviews="YES" multipleTouchEnabled="YES" tag="223" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="ViI-ss-n9s">
+                                                            <rect key="frame" x="0.0" y="0.0" width="195" height="111"/>
+                                                        </mapView>
+                                                        <button opaque="NO" tag="222" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0VY-4W-J5D" customClass="UIPurchaseButton" customModule="Morgan" customModuleProvider="target">
+                                                            <rect key="frame" x="39" y="113" width="117" height="30"/>
+                                                            <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="15"/>
+                                                            <state key="normal" title="Purchase Tickets">
+                                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                            </state>
+                                                        </button>
+                                                    </subviews>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="195" id="5Yj-wF-vse"/>
+                                                        <constraint firstAttribute="height" constant="143" id="tXs-Qx-cDJ"/>
+                                                    </constraints>
+                                                </view>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="2nF-cU-L2p" firstAttribute="leading" secondItem="WBn-PQ-pjt" secondAttribute="leadingMargin" constant="-2" id="BK2-gK-S6S"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="2nF-cU-L2p" secondAttribute="bottom" constant="24" id="Zpa-Bl-Jfn"/>
+                                                <constraint firstItem="2nF-cU-L2p" firstAttribute="top" secondItem="WBn-PQ-pjt" secondAttribute="topMargin" id="kd2-zY-OlI"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="previewCell" rowHeight="184" id="sqT-Ox-kcV">
+                                        <rect key="frame" x="-9" y="45" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="sqT-Ox-kcV" id="JYb-Xk-nK2">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <view tag="800" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TJl-r6-ubD">
+                                                    <rect key="frame" x="6" y="8" width="195" height="143"/>
+                                                    <subviews>
+                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" tag="90" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IvN-ha-g3D">
+                                                            <rect key="frame" x="0.0" y="0.0" width="195" height="111"/>
+                                                        </imageView>
+                                                        <label opaque="NO" userInteractionEnabled="NO" tag="92" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Radiohead" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="te3-6V-x3l">
+                                                            <rect key="frame" x="0.0" y="117" width="195" height="21"/>
+                                                            <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="14"/>
+                                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <button opaque="NO" tag="111" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n1s-Ta-745">
+                                                            <rect key="frame" x="63" y="21" width="69" height="69"/>
+                                                            <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="18"/>
+                                                            <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <state key="normal" image="play_btn_white">
+                                                                <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                            </state>
+                                                        </button>
+                                                    </subviews>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="195" id="Qfl-fU-l4F"/>
+                                                        <constraint firstAttribute="height" constant="143" id="xnl-uv-cc4"/>
+                                                    </constraints>
+                                                </view>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="TJl-r6-ubD" firstAttribute="top" secondItem="JYb-Xk-nK2" secondAttribute="topMargin" id="Zal-EX-iJ1"/>
+                                                <constraint firstItem="TJl-r6-ubD" firstAttribute="leading" secondItem="JYb-Xk-nK2" secondAttribute="leadingMargin" constant="-2" id="mkj-rL-adE"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="TJl-r6-ubD" secondAttribute="bottom" constant="24" id="nOc-qR-Ia2"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -83,7 +159,7 @@
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textField>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.97999999999999998" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="k3M-RP-2kn" firstAttribute="top" secondItem="x1O-yt-hoX" secondAttribute="bottom" id="31z-Il-ZzV"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="vs3-uo-JQT" secondAttribute="bottom" constant="8" id="GNj-82-xRg"/>
@@ -211,4 +287,7 @@
             <point key="canvasLocation" x="-9" y="1078"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="play_btn_white" width="128" height="128"/>
+    </resources>
 </document>
