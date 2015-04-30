@@ -71,14 +71,21 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="purchaseCell" rowHeight="171" id="y2I-s6-RHL">
+                                        <rect key="frame" x="-9" y="45" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="y2I-s6-RHL" id="WBn-PQ-pjt">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="previewCell" rowHeight="184" id="sqT-Ox-kcV">
                                         <rect key="frame" x="-9" y="45" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="sqT-Ox-kcV" id="JYb-Xk-nK2">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <view tag="800" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TJl-r6-ubD">
-                                                    <rect key="frame" x="13" y="8" width="195" height="143"/>
+                                                <view tag="800" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TJl-r6-ubD">
+                                                    <rect key="frame" x="6" y="8" width="195" height="143"/>
                                                     <subviews>
                                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" tag="90" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IvN-ha-g3D">
                                                             <rect key="frame" x="0.0" y="0.0" width="195" height="111"/>
@@ -107,16 +114,10 @@
                                                 </view>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="bottomMargin" secondItem="TJl-r6-ubD" secondAttribute="bottom" constant="5" id="2yk-gN-DFn"/>
-                                                <constraint firstItem="TJl-r6-ubD" firstAttribute="top" secondItem="JYb-Xk-nK2" secondAttribute="topMargin" constant="5" id="Tpp-3o-qaD"/>
+                                                <constraint firstItem="TJl-r6-ubD" firstAttribute="top" secondItem="JYb-Xk-nK2" secondAttribute="topMargin" id="Zal-EX-iJ1"/>
+                                                <constraint firstItem="TJl-r6-ubD" firstAttribute="leading" secondItem="JYb-Xk-nK2" secondAttribute="leadingMargin" constant="-2" id="mkj-rL-adE"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="TJl-r6-ubD" secondAttribute="bottom" constant="24" id="nOc-qR-Ia2"/>
                                             </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="purchaseCell" rowHeight="136" id="y2I-s6-RHL">
-                                        <rect key="frame" x="-9" y="45" width="320" height="44"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="y2I-s6-RHL" id="WBn-PQ-pjt">
-                                            <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                 </prototypes>
