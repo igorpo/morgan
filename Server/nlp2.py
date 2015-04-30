@@ -1,3 +1,4 @@
+#!/usr/bin/env python2.7
 import sys
 import os
 import csv
@@ -59,46 +60,42 @@ geolocation_phrases = ["nearby", "near me", "tonight"]
 
 def parse_text(text, return_responses):
 
+    my_dir = os.path.dirname(__file__)
+    pickle_file_path = os.path.join(my_dir, city_state_pickle_filename)
+
 	# if the city_state_data list has not been loaded, do so
-	if not os.path.exists(city_state_pickle_filename):
+	#if not os.path.exists(city_state_pickle_filename):
 		# create the pickled data structure file if it hasn't been done
-		loadCsvData()
-	picklefile = open(city_state_pickle_filename, 'rb')
-	city_state_data = pickle.load(picklefile)
-	picklefile.close()
-
+	#	loadCsvData()
+    picklefile = open(pickle_file_path, 'rb')
+    city_state_data = pickle.load(picklefile)
+    picklefile.close()
 	# for use in removing punctuation from strings
-	punct_set = set(string.punctuation)
-
-	# tokenize the string into words
-	text = text.lower()
-	text = text.split()
-
+    punct_set = set(string.punctuation)
+    # tokenize the string into words
+    text = text.lower()
+    text = text.split()
 	# look for location using keyword "in"
-	if 'in' in text:
-		i = text.index('in')
-
-		# get the rest of the sentence after keyword into a single string
-		location = text[i + 1: len(text)]
-		location = ' '.join(location)
-
+    if 'in' in text:
+    	i = text.index('in')
+        # get the rest of the sentence after keyword into a single string
+        location = text[i + 1: len(text)]
+        location = ' '.join(location)
 		# get the city name from the string (ignore state data)
-		if ',' in location:
-			city = location[0 : location.index(',')]
-			city = city.strip()
-		else:
-			city = location.strip()
-
-		# strip punctuation from city
-		city = ''.join(c for c in city if c not in punct_set)
-
-		# search for city name in csv data
-		city_exists = False
-		for one_city in city_state_data:
-			# compare our city's name to this city
-			if city == one_city[0].strip():
-				city_exists = True
-				break
+        if ',' in location:
+        	city = location[0 : location.index(',')]
+        	city = city.strip()
+        else:
+        	city = location.strip()
+        # strip punctuation from city
+        city = ''.join(c for c in city if c not in punct_set)
+        # search for city name in csv data
+        city_exists = False
+        for one_city in city_state_data:
+        	# compare our city's name to this city
+        	if city == one_city[0].strip():
+        		city_exists = True
+        		break
 
 		if city_exists:
 			# save this location in the data sent to server
@@ -113,30 +110,28 @@ def parse_text(text, return_responses):
 				"I'm sorry! Couldn't understand that. Is %s a city in the US?" % city
 
 
-	# TODO: look for venue using keyword "at"
-	elif 'at' in text:
-		pass
-
+    # TODO: look for venue using keyword "at"
+    elif 'at' in text:
+        pass
 
 	# check the entire text for location, artist, or geolocation
-	else:
-		text = ' '.join(text).strip()
-		text = ''.join(c for c in text if c not in punct_set) # remove punct
-
-		# try to parse a city name
-		city_exists = False
-		city = None
-		# search for city name in csv data
-		for one_city in city_state_data:
-			# compare our city's name to this city
-			if text == one_city[0].strip():
+    else:
+        text = ' '.join(text).strip()
+        text = ''.join(c for c in text if c not in punct_set) # remove punct
+        # try to parse a city name
+        city_exists = False
+        city = None
+        # search for city name in csv data
+        for one_city in city_state_data:
+        	# compare our city's name to this city
+            if text == one_city[0].strip():
 				city_exists = True
 				city = text
 				break
 
 		# try to parse an artist name
-		artist_exists = False
-		artist = None
+        artist_exists = False
+        artist = None
 		# search for artist keyword, and only search string before keyword for artist
 		search_text = text.split()
 		for word in search_text:
@@ -198,7 +193,7 @@ def getKeywords(text):
 			g.M_OTHER: None}}
 
 	parse_text(text, return_responses)
-	
+
 	return_responses[g.MESSAGE][g.M_TICKET] = \
 		customresponses["Tickets"][randint(0, len(customresponses["Tickets"])-1)]
 	return_responses[g.MESSAGE][g.M_PREVIEW] = \
@@ -237,7 +232,7 @@ def searchForArtist(potential_artist):
 
 	print('searchForArtist called with text \'%s\'' % potential_artist)
 	url = echo_api_request%(echo_api_key, potential_artist)
-	try: 
+	try:
 		data = urllib2.urlopen(url)
 	except urllib2.HTTPError:
 		print('searchForArtist: bad request to echonest api with \'%s\'' % potential_artist)
