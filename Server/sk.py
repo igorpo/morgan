@@ -1,6 +1,5 @@
 #!/usr/bin/env python2.7
 import requests
-import nlp2 as nlp
 import globals as g
 
 SK_APIKEY = "jgPHHuhmqGdnSzjE"
@@ -46,13 +45,14 @@ def searchForArtistID(artist_name, index=0):
 Find artist id using songkick and then find image using echonest
 '''
 def searchForArtistImage(artist_name):
+    artist_name.replace(" ","+")
     try:
         id = searchForArtistID(artist_name)
         url = "http://developer.echonest.com/api/v4/artist/images?api_key=NBXSOUGUPQXDHPCGX&id=songkick:artist:" + str(id) + "&format=json"
         data = getDataFromURL(url)
         return data["response"]["images"][0]["url"]
     except:
-        return None
+        return "http://static.giantbomb.com/uploads/original/0/6087/2435649-0965498946-rockb.jpg"
 
 '''
 Use the songkick api to lookup venue data given a venue id
@@ -66,15 +66,18 @@ def getVenueDataByID(id):
         return """Exception! searchForArtistID """ + str(e)
 
 '''
+Get the event data given a venue name.
 '''
 def searchForEventByVenueName(venue_name,index=0):
+    venue_name.replace(" ","+")
     url = SK_URL + "search/venues.json?query=" + venue_name + "&apikey=" + SK_APIKEY
     data = getDataFromURL(url)
     try:
         venue = data["resultsPage"]["results"]["venue"][0]
         id = venue["id"]
-        url2 = SK_URL + "venues/" + id + "/calendar.json?apikey=" + SK_ID
+        url2 = SK_URL + "venues/" + str(id) + "/calendar.json?apikey=" + SK_APIKEY
         data2 = getDataFromURL(url2)
+        return(data2)
     except:
         return "None"
 
@@ -109,7 +112,7 @@ Get .m4a link for artist preview through itunes api call.
 def getPreviewSong(artistName):
     try:
         artistName.replace(" ","+")
-        itunes_data = getDataFromURL('https://itunes.apple.com/search?term='+ artistName +'&limit=1')
+        itunes_data = getDataFromURL('https://itunes.apple.com/search?term='+ artistName +'&entity=song&sort=recent&limit=1') #
         previewURL = itunes_data["results"][0]["previewUrl"]
         return previewURL
     except Exception as e:
@@ -120,6 +123,10 @@ def searchForVenue(venue_name):
     url = SK_URL + "search/venues.json?query="+ venue_name +"&apikey=" + SK_APIKEY
     data = getDataFromURL(url)
 
+'''
+Helper method for looking up dictionary keys. Returns a string of None rather
+than a None object. This is easier for the device code to handle.
+'''
 def _get(dictionary,key):
     try:
         if dictionary[key] is not None:
@@ -131,13 +138,33 @@ def _get(dictionary,key):
 
 '''
 Process songkick api retrieval and build dictionary of relevent info.
+This is the universal function for constructing the map that is returned to the
+user. This function is designed to handle the different formats that the song
+kick api will return.
 '''
 def getEventDataFromSearch(data, index=0):
     try:
-        if index >= len(data["resultsPage"]["results"]["event"]):
-            index = 0
-        results = data["resultsPage"]["results"]["event"][index]
-        # ARTIST NAME
+        try:
+            if index >= len(data["resultsPage"]["results"]["event"]):
+                index = 0
+            results = data["resultsPage"]["results"]["event"][index]
+        except:
+            # In the case that there are no shows for the artist
+            # Return an empty dict
+            output = {
+                g.ARTIST: "None",
+                g.PREVIEW: "None",
+                g.VENUE: "None",
+                g.VENUENUM: "None",
+                g.VENUEWEB: "None",
+                g.VENUELAT: "None",
+                g.VENUELNG: "None",
+                g.DATE: "None",
+                g.TICKETS: "None",
+                g.PICTURE: "None"
+            }
+            return output
+        #ARTIST NAME
         artist = results["performance"][0]["artist"]["displayName"]
         # PREVIEW LINK
         preview = getPreviewSong(artist)
@@ -179,27 +206,12 @@ def getEventDataFromSearch(data, index=0):
     except Exception as e:
         return """Exception! getEventDataFromSearch """ + str(e)
 
-def test():
-    '''
-    keywords = {
-        g.CODE:1,
-        g.LOCATION:"Philadelphia",
-        g.LATITUDE:39.9500,
-        g.LONGITUDE:-75.1667,
-        g.ARTIST:"Clap Your Hands Say Yeah",
-        g.VENUE:"Johnny Brendas",
-        g.DATE:"Today",
-        }
-    print(searchByKeywords(keywords,39.9500,-75.1667,0))
-    print(searchByKeywords(keywords,39.9500,-75.1667,1))
-    print(searchByKeywords(keywords,39.9500,-75.1667,2))
-    '''
-    keywords = nlp.getKeywords("Shows near me")
-    print(keywords)
-    return_json = searchByKeywords(keywords, 39.9500,-75.1667, 0)
-    print(return_json)
-
-
+'''
+Main function for getting all of the necessary data back to the user.
+Takes keyword input from the nlp library, the lat / long data from the device,
+and the index of the search. Returns a dict with all of the data that could be
+found.
+'''
 def searchByKeywords(keywords, latitude, longitude, index):
     code = keywords[g.CODE]
     location = keywords[g.LOCATION]
@@ -219,13 +231,47 @@ def searchByKeywords(keywords, latitude, longitude, index):
         data = searchForEventByLocationName(location)
         return getEventDataFromSearch(data,index)
     # Shows by an artist
-    # add preview picture
     elif code == 3:
         data = searchForEventByArtistName(artist)
         return getEventDataFromSearch(data,index)
     # Shows at a venue
     elif code == 4:
-        return {}
+        data = searchForEventByVenueName(venue)
+        return getEventDataFromSearch(data,index)
     else:
         return {}
+
+def test():
+    keywords = {
+        g.CODE:2,
+        g.LOCATION:"Philadelphia",
+        g.LATITUDE:39.9500,
+        g.LONGITUDE:-75.1667,
+        g.ARTIST:"Clap Your Hands Say Yeah",
+        g.VENUE:"Johnny Brendas",
+        g.DATE:"Today",
+        }
+    #print(searchByKeywords(keywords,39.9500,-75.1667,0))
+    #print(searchByKeywords(keywords,39.9500,-75.1667,1))
+    #print(searchByKeywords(keywords,39.9500,-75.1667,2))
+
+    data1 = searchForEventByVenueName("Johnny Brendas")
+    print(getEventDataFromSearch(data1))
+
+    print(getEventDataFromSearch(data1,1))
+
+    print(getEventDataFromSearch(data1,2))
+
+    '''
+    data1 = searchForEventByArtistName("Radiohead")
+    print(getEventDataFromSearch(data1))
+
+    data2 = searchForEventByLocationCoordinates(39.9500, -75.1667)
+    print(getEventDataFromSearch(data2))
+
+    data3 = searchForEventByLocationName("Philadelphia")
+    print(getEventDataFromSearch(data3))
+    '''
+
+test()
 
