@@ -9,7 +9,7 @@
 #	4  = shows at a venue
 CODE = "code"
 
-# LOCATION = (String) city name of the location of interest, 
+# LOCATION = (String) city name of the location of interest,
 #            geolocation of device by default (if LOCATION field is nil)
 LOCATION = "location"
 LATITUDE = "latitude"
@@ -17,6 +17,9 @@ LONGITUDE = "longitude"
 
 # ARTIST = (String) artist's name
 ARTIST = "artist"
+
+# PICTURE
+PICTURE = "artist_picture"
 
 # PREVIEW = (String) link to itunes .m4a preview file
 PREVIEW = "preview"

@@ -1,8 +1,9 @@
+#!/usr/bin/env python2.7
 from datetime import timedelta
 from functools import update_wrapper
-from flask import Flask, request, url_for, make_response, current_app, jsonify
+from flask import Flask, request, make_response, current_app
 import sk
-import nlp2 as nlp
+import nlp
 import json
 import globals as g
 
@@ -81,19 +82,10 @@ def queryMorgan():
         lon = float(request.form["user_lon"])
         index = int(request.form["index"])
 
-        test_keywords = {
-            g.CODE:2,
-            g.LOCATION:"Philadelphia",
-            g.LATITUDE:lat,
-            g.LONGITUDE:lon,
-            g.ARTIST:"Clap Your Hands Say Yeah",
-            g.VENUE:"Johnny Brendas",
-            g.DATE:"Today"}
-
         keywords = nlp.getKeywords(data)
 
-        return_json = sk.searchByKeywords(test_keywords, lat, lon, index)
-        # return """Keywords """ + str(keywords) + """ lat: """ + str(lat) + """ lon: """ + str(lon)
+        return_json = sk.searchByKeywords(keywords, lat, lon, index)
+
         return json.dumps(return_json)
 
     except Exception as e:
