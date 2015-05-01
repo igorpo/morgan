@@ -36,12 +36,6 @@ class Message: NSObject {
         self.type = MessageType.Regular
     }
 
-//    init(content: String, isMorgan: Bool, type: MessageType) {
-//        self.content = content
-//        self.isMorgan = isMorgan
-//        self.type = type
-//    }
-
     init(content: String, isMorgan: Bool, type: MessageType, artist: String, previewImgUrl: String) {
         self.content = content
         self.isMorgan = isMorgan

@@ -19,7 +19,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     
     @IBOutlet var showPaneAtWill: UIBarButtonItem!
     var buyLink : String = ""
-    
+    var shouldScroll : Bool = false
     var player = AVPlayer()
     var typingLabel : UILabel = UILabel()
     var latestQuery : String = ""
@@ -121,6 +121,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             
             Server.postToServer(message.content, lat: Double(userLoc.latitude), lon: Double(userLoc.longitude), index: 0)
             latestQuery = message.content
+            self.messageTextField.resignFirstResponder()
         }
         messageTextField.text = ""
     }
@@ -144,23 +145,38 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                 println("JSON Error: \(err!.localizedDescription)")
                 
             } else {
-                date = jsonResult["date"] as! String
-                self.artist = jsonResult["artist"] as! String
-                self.artist_pic = jsonResult["artist_picture"] as! String
+                var message:Message
+                var anteMessage : Message
+                if (jsonResult["success"]?.boolValue != true) {
+                    // something went wrong
+                    let errMsg : String = jsonResult["message"] as! String
+                    anteMessage = Message(content: "Oops, something went wrong.", isMorgan: true)
+                    message = Message(content: errMsg, isMorgan: true)
 
-//                self.venueLon = (jsonResult["venue_lng"] as? NSString)!.doubleValue
-                self.venueLon = jsonResult["venue_lng"]!.doubleValue
-                self.venueLat = jsonResult["venue_lat"]!.doubleValue
-//                self.venueLat = (jsonResult["venue_lat"] as? NSString)!.doubleValue
-                venue = jsonResult["venue"] as! String
-                previewURL = jsonResult["preview"] as! String
-                buyLink = jsonResult["buyLink"] as! String != "None" ? jsonResult["buyLink"] as! String : "http://www.ticketmaster.com/"
-                content = "\(self.artist) is playing at \(venue) on \(date). You can tap one of the following buttons for more info, or simply ask Morgan something else!"
-                println(content)
+                } else {
+                    self.shouldScroll = true // for showing auto response buttons
+                    date = jsonResult["date"] as! String
+                    self.artist = jsonResult["artist"] as! String
+                    self.artist_pic = jsonResult["artist_picture"] as! String
+                    
+                    //                self.venueLon = (jsonResult["venue_lng"] as? NSString)!.doubleValue
+                    self.venueLon = jsonResult["venue_lng"]!.doubleValue
+                    self.venueLat = jsonResult["venue_lat"]!.doubleValue
+                    //                self.venueLat = (jsonResult["venue_lat"] as? NSString)!.doubleValue
+                    venue = jsonResult["venue"] as! String
+                    previewURL = jsonResult["preview"] as! String
+                    buyLink = jsonResult["buyLink"] as! String != "None" ? jsonResult["buyLink"] as! String : "http://www.ticketmaster.com/"
+                    
+                    content = "\(self.artist) is playing at \(venue) on \(date). You can tap one of the following buttons for more info, or simply ask Morgan something else!"
+                    println(content)
+                    message = Message(content: content, isMorgan: true)
+                    anteMessage = Responses.returnShowResponseMessage()
+
+                    
+//                    self.tableView.frame.origin.y -= 150
+
+                }
                 
-                var message:Message = Message(content: content, isMorgan: true)
-                var anteMessage : Message = Responses.returnShowResponseMessage()
-
                 morganAnswersWithAnteMessage(anteMessage, message: message)
             }
             
@@ -179,6 +195,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.removeMorganIsTyping()
         })
+        
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.showAnswerButtons()
         })
@@ -314,12 +331,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             
 
             let bubbleView: UIView = UIView(frame: rect)
-//            bubbleView.layer.borderColor = UIColor(red: 229 / 255.0, green: 229 / 255.0, blue: 234 / 255.0, alpha: 1).CGColor
-//            bubbleView.backgroundColor = UIColor(red: 229 / 255.0, green: 229 / 255.0, blue: 234 / 255.0, alpha: 1)
             bubbleView.backgroundColor = UIColor.whiteColor()
             theLabel.textColor = UIColor.blackColor()
-//            bubbleView.layer.borderWidth = 1
-//            bubbleView.layer.cornerRadius = 18
             
             bubbleView.layer.cornerRadius = 10.0
             bubbleView.layer.borderColor = UIColor.grayColor().CGColor
@@ -364,11 +377,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             let rect = CGRectMake(xCoord, theLabel.frame.origin.y, setTxtWidth, theLabel.frame.height)
 
             let bubbleView: UIView = UIView(frame: rect)
-//            bubbleView.layer.borderColor = UIColor.clearColor().CGColor
             bubbleView.backgroundColor = UIColor(red: 67 / 255.0, green: 174 / 255.0, blue: 247 / 255.0, alpha: 0.8)
             theLabel.textColor = UIColor.whiteColor()
-//            bubbleView.layer.borderWidth = 1
-//            bubbleView.layer.cornerRadius = 18
             
             bubbleView.layer.cornerRadius = 10.0
             bubbleView.layer.borderColor = UIColor.grayColor().CGColor
@@ -401,7 +411,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             
             let artistLabel : UILabel = cell.viewWithTag(92) as! UILabel
             artistLabel.text = currentMessage.artist
-//            let image : UIImage = UIImage(named: "concert1")!
             
 //            self.artist_pic
             let url = NSURL(string: currentMessage.previewImgUrl)
@@ -410,8 +419,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             
             let imgView: UIImageView = cell.viewWithTag(90) as! UIImageView
             imgView.image = UIImage(data: data!)
-//            imgView.layer.cornerRadius = 8
-//            imgView.image = image
         } else if cellIdentifier == "purchaseCell" {
             println(currentMessage.lat)
             
@@ -480,9 +487,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                 sendConstraint.constant = BOTTOM_CONSTRAINT
                 
                 // this isn't really needed here, they keyboard closes on its own but a little slower is better i think
-                UIView.animateWithDuration(2, animations: { () -> Void in
-                    self.view.layoutIfNeeded()
-                })
+//                UIView.animateWithDuration(2, animations: { () -> Void in
+//                    self.view.layoutIfNeeded()
+//                })
             }
         }
     }
@@ -582,15 +589,19 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     func showAnswerButtons() {
         self.ansView = UIView(frame: CGRectMake(0, UIScreen.mainScreen().applicationFrame.height - KEYBOARD_HEIGHT, UIScreen.mainScreen().applicationFrame.width, KEYBOARD_HEIGHT + 20))
         self.ansView.backgroundColor = UIColor(red: 242 / 255.0, green: 242 / 255.0, blue: 242 / 255.0, alpha: 1)
+        // bring this back
+//        self.messageTextField.hidden = true
         self.messageTextField.resignFirstResponder()
         let transition = UIViewAnimationOptions.TransitionCrossDissolve
         UIView.transitionWithView(self.view, duration: 0.8, options: transition, animations: {
                                   self.view.addSubview(self.ansView)}, completion: nil)
-        
-        
         generateAutoResponseButtons(["Show me tickets!", "Show Preview!", "Other result please!"])
         
         generateRemoveSubviewButton()
+        
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.tableView.frame.origin.y -= 150
+        })
     }
     
     
@@ -641,11 +652,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         button1.addTarget(self, action: "showTicketsLink", forControlEvents: .TouchUpInside)
         button2.addTarget(self, action: "showPreviewSong", forControlEvents: .TouchUpInside)
         button3.addTarget(self, action: "showNextResult", forControlEvents: .TouchUpInside)
-        self.tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: messages.count - 1, inSection: 0), atScrollPosition: UITableViewScrollPosition.Bottom, animated: true)
-        
     }
-    
-    /* 
+    /*
      * Recreates a message from the auto button selection
      */
     func sendMorganMessageFromAutoRepsonseButton(message : String, type: Message.MessageType) {
@@ -662,8 +670,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         }
         
         morganAnswersWithAnteMessage(anteMessage, message: message)
-
-//        Server.postToServer(message.content, lat: Double(userLoc.latitude), lon: Double(userLoc.longitude))
         dismissAutoResponsePane()
     }
     
@@ -674,17 +680,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         let transition = UIViewAnimationOptions.TransitionCrossDissolve
         UIView.transitionWithView(self.view, duration: 0.8, options: transition, animations: {
             self.ansView.removeFromSuperview()}, completion: nil)
+        self.shouldScroll = false
     }
     
     /*
      * Bring up tix link
      */
     func showTicketsLink() {
-//        let button = UIBarButtonItem(barButtonSystemItem:UIBarButtonSystemItem.Action, target: self, action: "openPurchaseUrl")
-//        self.navigationController?.navigationBar.topItem?.rightBarButtonItem = button
-        
         sendMorganMessageFromAutoRepsonseButton("Tap the action button on the top right to purchase tickets!", type: Message.MessageType.Purchase)
-        
     }
     
     func openPurchaseUrl(buyButton : UIPurchaseButton) {

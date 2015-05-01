@@ -100,7 +100,7 @@
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="2nF-cU-L2p" firstAttribute="leading" secondItem="WBn-PQ-pjt" secondAttribute="leadingMargin" constant="-2" id="BK2-gK-S6S"/>
-                                                <constraint firstAttribute="bottomMargin" secondItem="2nF-cU-L2p" secondAttribute="bottom" constant="24" id="Zpa-Bl-Jfn"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="2nF-cU-L2p" secondAttribute="bottom" constant="5" id="Zpa-Bl-Jfn"/>
                                                 <constraint firstItem="2nF-cU-L2p" firstAttribute="top" secondItem="WBn-PQ-pjt" secondAttribute="topMargin" id="kd2-zY-OlI"/>
                                             </constraints>
                                         </tableViewCellContentView>

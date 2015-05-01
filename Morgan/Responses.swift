@@ -24,7 +24,7 @@ class Responses: NSObject {
         var responses = ["Super! You can get tickets here: ",
 								"Good choice. Here you go: ",
 								"Get ready for some tasty jams: ",
-								"Right on. You are going to have a time! ",
+								"Right on. You are going to have a good time! ",
 								"Awesome! Have fun, but not too much fun: "]
         let randomIndex = Int(arc4random_uniform(UInt32(responses.count)))
         return Message(content: responses[randomIndex], isMorgan: true)
