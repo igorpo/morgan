@@ -44,7 +44,7 @@ time_phrases = ["tonight", "tomorrow", "today"]
 salutation_phrases = \
     ["hi", "hello", "hey", "whats up", "whattup", "waddup", "hows it going", "hows it goin",
     "whats cooking", "hey whats up", "hello beautiful", "i want to marry you", "i like you", "i love you",
-    "love me", "yo", "yo whats up", "what are you up to"]
+    "love me", "yo", "yo whats up", "what are you up to", "how are you"]
 
 salutation_responses = ["What's cookin good lookin?", "How's it hanging sugar daddy/mama?",
                         "How can I help you darlin?","Oh wow! You made my day by saying hey.", 
