@@ -3,9 +3,10 @@ from datetime import timedelta
 from functools import update_wrapper
 from flask import Flask, request, make_response, current_app
 import sk
-import nlp
+import nlp2 as nlp
 import json
 import globals as g
+
 
 try:
     unicode = unicode

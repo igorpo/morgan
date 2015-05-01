@@ -50,4 +50,5 @@ M_PREVIEW = "preview"
 M_SHOW = "show"
 M_OTHER = "other"
 
+SUCCESS = "success"
 
