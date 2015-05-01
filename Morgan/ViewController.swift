@@ -54,7 +54,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         showPaneAtWill.enabled = false
         
         setUpLocation()
-        let content1 = "Hello! I'm Morgan! Tell me things like: 'show me concerts in New York' or 'concerts near me' and add some more useless shit to test the bubble bound shit."
+        let content1 = "Hello! I'm Morgan! Tell me things like: 'show me concerts in New York' or 'concerts near me'"
         let welcomeMsg: Message = Message(content: content1, isMorgan: true)
         messages.append(welcomeMsg)
         
@@ -135,7 +135,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         var date: String = ""
         var artist: String = ""
         var venue: String = ""
-
+        var success : Bool = false
         let jsonData: NSData = morganResponse.dataUsingEncoding(NSUTF8StringEncoding)!
         
         var err: NSError?
@@ -149,11 +149,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                 var anteMessage : Message
                 if (jsonResult["success"]?.boolValue != true) {
                     // something went wrong
+                    success = false
                     let errMsg : String = jsonResult["message"] as! String
-                    anteMessage = Message(content: "Oops, something went wrong.", isMorgan: true)
+//                    anteMessage = Message(content: "Oops, something went wrong.", isMorgan: true)
                     message = Message(content: errMsg, isMorgan: true)
+                    messages.append(message)
+                    updateTableView()
 
                 } else {
+                    success = true
                     self.shouldScroll = true // for showing auto response buttons
                     date = jsonResult["date"] as! String
                     self.artist = jsonResult["artist"] as! String
@@ -171,13 +175,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                     println(content)
                     message = Message(content: content, isMorgan: true)
                     anteMessage = Responses.returnShowResponseMessage()
-
-                    
+                    morganAnswersWithAnteMessage(anteMessage, message: message)
 //                    self.tableView.frame.origin.y -= 150
 
                 }
                 
-                morganAnswersWithAnteMessage(anteMessage, message: message)
+
             }
             
         } else {
@@ -197,7 +200,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         })
         
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            self.showAnswerButtons()
+            if success {
+                self.showAnswerButtons()
+            }
+
         })
 
     }
@@ -600,7 +606,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         generateRemoveSubviewButton()
         
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            self.tableView.frame.origin.y -= 150
+            self.tableView.frame.origin.y -= (KEYBOARD_HEIGHT - 100)
         })
     }
     
@@ -692,7 +698,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     
     func openPurchaseUrl(buyButton : UIPurchaseButton) {
 
-
+        dismissAutoResponsePane()
         let optionMenu = UIAlertController(title: nil, message: "Choose Option", preferredStyle: .ActionSheet)
 
         let buyAction = UIAlertAction(title: "Open in Safari", style: .Default, handler: {
@@ -715,12 +721,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     
     func showPreviewSong() {
         makePlayActive()
+                dismissAutoResponsePane()
         sendMorganMessageFromAutoRepsonseButton("Here! Tap the play button in the top right corner to hear some tunes by this artist", type: Message.MessageType.Preview)
     }
     
     func showNextResult() {
         gIndex++
         Server.postToServer(latestQuery, lat: Double(userLoc.latitude), lon: Double(userLoc.longitude), index:gIndex)
+        dismissAutoResponsePane()
         showMorganIsTyping()
     }
     
