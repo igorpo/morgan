@@ -81,14 +81,13 @@ def queryMorgan():
         data = str(request.form["user_raw_data"])
         lat = float(request.form["user_lat"])
         lon = float(request.form["user_lon"])
-        return lat
         index = int(request.form["index"])
 
         keywords = nlp.getKeywords(data)
 
         return_json = sk.searchByKeywords(keywords, lat, lon, index)
 
-        #return json.dumps(return_json)
+        return json.dumps(return_json)
 
     except Exception as e:
         return """Exception! queryMorgan """ + str(e)

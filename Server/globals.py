@@ -36,8 +36,19 @@ TICKETS = "buyLink"
 # DATE = (Datetime) date of interest, current date by default
 DATE = "date"
 
-# MESSAGE = (Dictionary) messages to user when the query is poorly formatted or nonexistent
+# MESSAGE = (Dictionary) messages to include along with data received from SK API
+#	Keys  = SHOW, TICKET, PREVIEW
+#	Values = (String) personalized message
+#	Example = { SHOW: "This show looks like an awesome time: "
+#				TICKET: "Super! You can get tickets here: ",
+#				PREVIEW: "Take a listen: "
+#				OTHER: "I'm sorry, I don't understand what you're asking"}
 MESSAGE = "message"
+# Dictionary Keys
+M_TICKET = "ticket"
+M_PREVIEW = "preview"
+M_SHOW = "show"
+M_OTHER = "other"
 
-
+SUCCESS = "success"
 
