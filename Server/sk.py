@@ -1,7 +1,7 @@
 #!/usr/bin/env python2.7
 import requests
 import globals as g
-from datetime import date
+import datetime
 
 SK_APIKEY = "jgPHHuhmqGdnSzjE"
 EN_APIKEY = "NBXSOUGUPQXDHPCGX"
@@ -127,17 +127,32 @@ def searchForVenue(venue_name):
 '''
 Create a string given the YYYY-MM-DDTHH:MM:SS format
 '''
-def getStringFromDate(date):
+
+
+def getStringFromDate(input):
     try:
         try:
-            d_t = date.split("T")
+            d_t = input.split("T")
             d = d_t[0].split("-")
             t = d_t[1].split(":")
-            day = date(day=d[2], month = d[1], year=d[0]).strftime('%A %d %B %Y')
-            return day + " at" + t[0] + ":" + t[1]
+            year = int(d[0])
+            month = int(d[1])
+            day = int(d[2])
+            dt = datetime.date(year,month,day)
+            day_s = dt.strftime("%A %B %d %Y")
+
+            tm = datetime.datetime.strptime(d_t[1],"%H:%M:%S")
+            tm2 = tm.strftime("%I:%M %p")
+
+            return day_s + " at " + tm2
         except:
-            d = date.split("-")
-            return date(day=d[2], month = d[1], year=d[0]).strftime('%A %d %B %Y')
+            d = input.split("-")
+            year = int(d[0])
+            month = int(d[1])
+            day = int(d[2])
+            dt = datetime.date(year,month,day)
+            day_s = dt.strftime("%A %B %d %Y")
+            return day_s
     except:
         return "None"
 
