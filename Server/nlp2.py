@@ -4,8 +4,8 @@ import os
 import csv
 import pickle
 import urllib2
-from random import randint
-#import requests
+import random
+import math
 import json
 import string
 import globals as g
@@ -41,6 +41,24 @@ geolocation_phrases = ["nearby", "near me", "tonight"]
 
 time_phrases = ["tonight", "tomorrow", "today"]
 
+salutation_phrases = \
+    ["hi", "hello", "hey", "whats up", "whattup", "waddup", "hows it going", "hows it goin",
+    "whats cooking", "hey whats up", "hello beautiful", "i want to marry you", "i like you", "i love you",
+    "love me", "yo", "yo whats up", "what are you up to"]
+
+salutation_responses = ["What's cookin good lookin?", "How's it hanging sugar daddy/mama?",
+                        "How can I help you darlin?","Oh wow! You made my day by saying hey.", 
+                        "I am here to SERVE YOU!","Only tell me something I want to hear.", 
+                        "Did you watch the last Game of Thrones episode? Raunchy.",
+                        "I wrote a song about you. You can't hear it.", "Let's Boogie.", 
+                        "Let's get Funky.","Let's get it started in HEeeeeEeEEEERE."]
+
+profane_phrases = ["fuck", "shit", "damn", "bitch", "ass", "motherfucking", "fucker", "slut"]
+
+profane_responses = ["Oh my! Can you please ask something nicely?", 
+                    "Keep it kosher. Try me again without the profanity.",
+                    "Lose the attitude. Ask me something like I'm your Grandma."]
+
 def parse_text(text, return_responses):
 
     # load necessary city state and stopwords data
@@ -58,6 +76,22 @@ def parse_text(text, return_responses):
 
     # set for use in removing punctuation from strings
     punct_set = set(string.punctuation)
+
+    # see if the user input is a salutation
+    search_text = ''.join(c for c in text if c not in punct_set)
+    search_text = search_text.lower().strip()
+    if search_text in salutation_phrases:
+        return_responses[g.CODE] = 0 # code 0 = not a query
+        return_responses[g.MESSAGE] = \
+            salutation_responses[int(random.random()*len(salutation_responses))] + " Ask me anything!"
+        return return_responses
+
+    for word in profane_phrases:
+        if word in text:
+            return_responses[g.CODE] = 0 # code 0 = not a query
+            return_responses[g.MESSAGE] = \
+                profane_responses[int(random.random()*len(profane_responses))]
+            return return_responses
 
     # tokenize the string into words
     text = text.lower()
