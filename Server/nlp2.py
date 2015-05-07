@@ -147,7 +147,7 @@ def parse_text(text, return_responses):
         venue = ' '.join(text)
         venue = ''.join(c for c in venue if c not in punct_set) # remove punctuation
         # check if the venue exists
-        if searchForVenue(venue):
+        if search_for_venue(venue):
             # save this venue in the data sent to server
             return_responses[g.CODE] = 4 # user's query = find shows by venue
             return_responses[g.VENUE] = venue
@@ -202,7 +202,7 @@ def parse_text(text, return_responses):
                     current_text = ' '.join(current_text)
                     current_text = current_text.strip()
                     # search api and set artist if exists
-                    artist_exists = searchForArtist(current_text)
+                    artist_exists = search_for_artist(current_text)
                     if artist_exists:
                         artist_exists = True
                         artist = current_text
@@ -210,7 +210,7 @@ def parse_text(text, return_responses):
                 if artist_exists:
                     break
         else:
-            if searchForArtist(text):
+            if search_for_artist(text):
                 artist_exists = True
                 artist = text
 
@@ -233,7 +233,7 @@ def parse_text(text, return_responses):
             text.remove(found_time_phrase)
         text = ' '.join(text).strip()
         # search for venue name using song kick api
-        if searchForVenue(text):
+        if search_for_venue(text):
             venue_exists = True
             venue = text
 
@@ -253,7 +253,7 @@ def parse_text(text, return_responses):
                 "I'm sorry! I don't understand what you're asking. Hit me with something else!"
 
 
-def getKeywords(text):
+def get_keywords(text):
 
     return_responses = {
         g.CODE: None,
@@ -266,20 +266,20 @@ def getKeywords(text):
     parse_text(text, return_responses)
     return return_responses
 
-def searchForArtist(potential_artist):
+def search_for_artist(potential_artist):
     potential_artist = potential_artist.replace(' ', '_')
-    #print('searchForArtist called with text \'%s\'' % potential_artist)
+    #print('search_for_artist called with text \'%s\'' % potential_artist)
     url = echo_api_request%(echo_api_key, potential_artist)
     try:
         data = urllib2.urlopen(url)
     except urllib2.HTTPError:
-        print("searchForArtist: bad request to echonest api with \'%s\'" % potential_artist)
+        print("search_for_artist: bad request to echonest api with \'%s\'" % potential_artist)
         sys.stderr.write("BAD REQUEST\n")
         return False
     try:
         response = json.loads(data.read())
     except ValueError:
-        print("searchForArtist: error reading json from api response")
+        print("search_for_artist: error reading json from api response")
         sys.stderr.write("JSON ERROR\n")
         return False
 
@@ -288,20 +288,20 @@ def searchForArtist(potential_artist):
     else:
         return False
 
-def searchForVenue(potential_venue):
+def search_for_venue(potential_venue):
     potential_venue = potential_venue.replace(' ','+')
     url = sk_api_request%(potential_venue, sk_api_key)
-    print(url)
+    #print(url)
     try:
         data = urllib2.urlopen(url)
     except urllib2.HTTPError:
-        print("searchForVenue: bad request to songkick api with \'%s\'" % potential_venue)
+        print("search_for_venue: bad request to songkick api with \'%s\'" % potential_venue)
         sys.stderr.write('BAD REQUEST\n')
         return False
     try:
         response = json.loads(data.read())
     except ValueError:
-        print('searchForVenue: error reading json from api response')
+        print('search_for_venue: error reading json from api response')
         sys.stderr.write('JSON ERROR\n')
         return False
 
@@ -312,7 +312,7 @@ def searchForVenue(potential_venue):
 
 # helper functions for storing raw city data and 
 # stopwords data as pickled data structures
-def loadCsvData():
+def load_csv_data():
     # open the city state csv file
     f = open(city_state_csv_filename, 'rt')
     try:
@@ -334,7 +334,7 @@ def loadCsvData():
     pickle.dump(city_state_data, picklefile)
     picklefile.close()
 
-def loadStopwords():
+def load_stopwords():
     # open the stopwords txt file
     f = open(stopwords_txt_filename, 'rt')
     stopwords_data = []
