@@ -25,17 +25,18 @@ class Message: NSObject {
     
     var type : MessageType
     
-
-    // 0 = regular
-    // 1 = preview
-    // 2 = purchase
-    
+   /*
+    * constructor for a Morgan message text
+    */
     init(content: String, isMorgan: Bool) {
         self.content = content
         self.isMorgan = isMorgan
         self.type = MessageType.Regular
     }
 
+   /*
+    * Constructor for a preview message
+    */
     init(content: String, isMorgan: Bool, type: MessageType, artist: String, previewImgUrl: String) {
         self.content = content
         self.isMorgan = isMorgan
@@ -44,6 +45,9 @@ class Message: NSObject {
         self.previewImgUrl = previewImgUrl
     }
 
+   /*
+    * Constructor for a tix purchase link message
+    */
     init(content: String, isMorgan: Bool, type: MessageType, lon: Double, lat: Double, buyLink: String) {
         self.content = content
         self.isMorgan = isMorgan
@@ -53,6 +57,9 @@ class Message: NSObject {
         self.buyLink = buyLink
     }
     
+   /*
+    * Find type of message
+    */
     func getType() -> MessageType {
         return type
     }

@@ -151,7 +151,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                     // something went wrong
                     success = false
                     let errMsg : String = jsonResult["message"] as! String
-//                    anteMessage = Message(content: "Oops, something went wrong.", isMorgan: true)
                     message = Message(content: errMsg, isMorgan: true)
                     messages.append(message)
                     updateTableView()
@@ -162,11 +161,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                     date = jsonResult["date"] as! String
                     self.artist = jsonResult["artist"] as! String
                     self.artist_pic = jsonResult["artist_picture"] as! String
-                    
-                    //                self.venueLon = (jsonResult["venue_lng"] as? NSString)!.doubleValue
                     self.venueLon = jsonResult["venue_lng"]!.doubleValue
                     self.venueLat = jsonResult["venue_lat"]!.doubleValue
-                    //                self.venueLat = (jsonResult["venue_lat"] as? NSString)!.doubleValue
                     venue = jsonResult["venue"] as! String
                     previewURL = jsonResult["preview"] as! String
                     buyLink = jsonResult["buyLink"] as! String != "None" ? jsonResult["buyLink"] as! String : "http://www.ticketmaster.com/"
@@ -176,7 +172,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
                     message = Message(content: content, isMorgan: true)
                     anteMessage = Responses.returnShowResponseMessage()
                     morganAnswersWithAnteMessage(anteMessage, message: message)
-//                    self.tableView.frame.origin.y -= 150
 
                 }
                 
@@ -186,7 +181,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         } else {
             println("json results didnt work")
             
-            // random SORRY messages for bad queries
             
         }
         
@@ -228,8 +222,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
      * Fires from a response
      */
     func makePlayActive() {
-//        let button = UIBarButtonItem(barButtonSystemItem:UIBarButtonSystemItem.Play, target: self, action: "tapPlay:")
-//        self.navigationController?.navigationBar.topItem?.rightBarButtonItem = button
         println("play is now active")
     }
     
@@ -248,8 +240,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         player.play()
 
         //change to pause
-//        let button = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Pause, target: self, action: "pauseMusic")
-//        self.navigationController?.navigationBar.topItem?.rightBarButtonItem? = button
         
         let playButton : UIButton = sender as! UIButton
         playButton.setImage(UIImage(named: "pause_btn_white"), forState: .Normal)
@@ -262,8 +252,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
      */
     func pauseMusic(sender: AnyObject) {
         player.pause()
-//        let button = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Play, target: self, action: "tapPlay:")
-//        self.navigationController?.navigationBar.topItem?.rightBarButtonItem? = button
         let playButton : UIButton = sender as! UIButton
         playButton.setImage(UIImage(named: "play_btn_white"), forState: .Normal)
         playButton.addTarget(self, action: "tapPlay:", forControlEvents: .TouchUpInside)
@@ -491,11 +479,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
             if let keyboardHeight = userInfo[UIKeyboardFrameEndUserInfoKey]?.CGRectValue().size.height {
                 txtFieldConstraint.constant = BOTTOM_CONSTRAINT
                 sendConstraint.constant = BOTTOM_CONSTRAINT
-                
-                // this isn't really needed here, they keyboard closes on its own but a little slower is better i think
-//                UIView.animateWithDuration(2, animations: { () -> Void in
-//                    self.view.layoutIfNeeded()
-//                })
             }
         }
     }
@@ -596,7 +579,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         self.ansView = UIView(frame: CGRectMake(0, UIScreen.mainScreen().applicationFrame.height - KEYBOARD_HEIGHT, UIScreen.mainScreen().applicationFrame.width, KEYBOARD_HEIGHT + 20))
         self.ansView.backgroundColor = UIColor(red: 242 / 255.0, green: 242 / 255.0, blue: 242 / 255.0, alpha: 1)
         // bring this back
-//        self.messageTextField.hidden = true
         self.messageTextField.resignFirstResponder()
         let transition = UIViewAnimationOptions.TransitionCrossDissolve
         UIView.transitionWithView(self.view, duration: 0.8, options: transition, animations: {
@@ -614,6 +596,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
     
     // MARK: auto response code
     
+    /*
+     * Create the clear auto response pane button
+     */
     func generateRemoveSubviewButton() {
         let delete = UIButton.buttonWithType(UIButtonType.Custom) as! UIButton
         delete.frame = CGRectMake(15, 10, 25, 25)
@@ -719,12 +704,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         self.presentViewController(optionMenu, animated: true, completion: nil)
     }
     
+    /*
+     * Show a song preview from iTunes
+     */
     func showPreviewSong() {
         makePlayActive()
                 dismissAutoResponsePane()
         sendMorganMessageFromAutoRepsonseButton("Here! Tap the play button in the top right corner to hear some tunes by this artist", type: Message.MessageType.Preview)
     }
     
+    /*
+     * Show another result from Morgan
+     */
     func showNextResult() {
         gIndex++
         Server.postToServer(latestQuery, lat: Double(userLoc.latitude), lon: Double(userLoc.longitude), index:gIndex)
@@ -732,10 +723,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITextFieldDelegate
         showMorganIsTyping()
     }
     
+    /*
+     * typing.... label
+     */
     func showMorganIsTyping() {
         typingLabel.hidden = false
     }
     
+    /*
+     * typing.... label is gone
+     */
     func removeMorganIsTyping() {
         typingLabel.hidden = true
     }

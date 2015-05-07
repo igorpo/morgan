@@ -10,6 +10,9 @@ import UIKit
 
 class Responses: NSObject {
     
+    /*
+     * Morgan's concurrent message responses with a show prompt
+     */
     class func returnShowResponseMessage() -> Message {
         var responses = ["Here's one I think you might like: ",
             "What about this show? ",
@@ -20,6 +23,9 @@ class Responses: NSObject {
         return Message(content: responses[randomIndex], isMorgan: true)
     }
     
+   /*
+    * Morgan's concurrent message responses with a tix prompt
+    */
     class func returnTicketResponseMessage() -> Message {
         var responses = ["Super! You can get tickets here: ",
 								"Good choice. Here you go: ",
@@ -30,6 +36,9 @@ class Responses: NSObject {
         return Message(content: responses[randomIndex], isMorgan: true)
     }
     
+   /*
+    * Morgan's concurrent message responses with a preview prompt
+    */
     class func returnPreviewResponseMessage() -> Message {
         var responses = ["Check this out: ",
             "Take a listen: ",

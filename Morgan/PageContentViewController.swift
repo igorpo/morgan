@@ -17,7 +17,9 @@ class PageContentViewController: UIViewController  {
     var titleText : String!
     var imageName : String!
     
-    
+   /*
+    * Set up page screens on load
+    */
     override func viewDidLoad() {
         super.viewDidLoad()
         self.heading.sizeToFit()
@@ -29,12 +31,12 @@ class PageContentViewController: UIViewController  {
                 self.heading.alpha = 1.0
             })
         }
-
-        // Do any additional setup after loading the view.
     }
 
+   /*
+    * Apple Memory
+    */
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 }

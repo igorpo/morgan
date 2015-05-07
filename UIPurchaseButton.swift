@@ -8,6 +8,9 @@
 
 import UIKit
 
+/*
+ * subclass the UIButton
+ */
 class UIPurchaseButton: UIButton {
     var buyLink : String = ""
 

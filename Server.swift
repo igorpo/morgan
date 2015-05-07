@@ -39,31 +39,4 @@ class Server: NSObject {
         
         })
     }
-    
-    /*
-     * Sprint: Test to make sure that preview song plays
-     */
-    class func getPreviewSong(artist_name: String) -> Void {
-        var new_name = artist_name.stringByReplacingOccurrencesOfString(" ", withString: "+", options: NSStringCompareOptions.LiteralSearch, range: nil)
-        let request = NSMutableURLRequest(URL: NSURL(string: "https://jbartolozzi.pythonanywhere.com/\(new_name)/preview")!)
-        request.HTTPMethod = "POST"
-        let queue: NSOperationQueue = NSOperationQueue()
-        NSURLConnection.sendAsynchronousRequest(request, queue: queue, completionHandler: {
-            (response: NSURLResponse!, data: NSData!, error: NSError!) -> Void in
-            if error != nil {
-                println("error=\(error)")
-                return
-            }
-            println("Response: \(response)")
-            if let responseString = NSString(data: data, encoding: NSUTF8StringEncoding) {
-                previewURL = responseString as String
-                println("Response String: " + (responseString as String))
-                //morganAnsweredNotification
-                NSNotificationCenter.defaultCenter().postNotificationName("previewURLNotification", object: nil)
-            }
-            
-            
-        })
-    }
-
 }
